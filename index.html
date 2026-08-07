@@ -1,0 +1,1881 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Lustre - Detail Shop OS</title>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Lustre">
+<meta name="theme-color" content="#14161a">
+<style>
+  html, body { margin:0; padding:0; background:#14161a; }
+</style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap');
+
+* { box-sizing: border-box; }
+
+:root, .dtl-root {
+  --bg: #14161a;
+  --bg-elev: #1b1e24;
+  --surface: #20242c;
+  --surface-2: #282d38;
+  --border: #333846;
+  --text: #edebe5;
+  --text-dim: #9aa0ac;
+  --text-faint: #676d79;
+  --accent: #e8a33d;
+  --accent-soft: #3a2f1c;
+  --accent-2: #4fb8e0;
+  --success: #4caf6d;
+  --danger: #e2574c;
+  --violet: #b98af0;
+  --violet-soft: #2a2438;
+  --teal: #49c7b8;
+  --teal-soft: #1c2f2d;
+  --rose: #ef82ab;
+  --rose-soft: #33212b;
+  --radius: 10px;
+  font-family: var(--font-body), 'Inter', sans-serif;
+  --font-display: 'Oswald', sans-serif;
+  --font-body: 'Inter', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 236px 1fr;
+  position: relative;
+  overflow-x: hidden;
+}
+
+.dtl-root, .dtl-root * { box-sizing: border-box; }
+.dtl-root ::selection { background: var(--accent); color: #14161a; }
+
+/* ---------- SIDEBAR ---------- */
+.dtl-sidebar {
+  background: var(--bg-elev);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  padding: 22px 14px;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+}
+.dtl-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 4px 10px 22px 10px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 18px;
+}
+.dtl-brand-mark {
+  width: 34px; height: 34px; border-radius: 8px;
+  background: linear-gradient(135deg, var(--accent), #b9772a);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 2px 10px rgba(232,163,61,0.25);
+}
+.dtl-brand-mark svg { width: 19px; height: 19px; }
+.dtl-brand-text { line-height: 1.1; }
+.dtl-brand-text .name {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 17px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text);
+}
+.dtl-brand-text .tag {
+  font-size: 10.5px;
+  color: var(--text-faint);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.dtl-nav { display: flex; flex-direction: column; gap: 3px; flex: 1; }
+.dtl-nav-item {
+  display: flex; align-items: center; gap: 11px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  color: var(--text-dim);
+  cursor: pointer;
+  border: none;
+  background: transparent;
+  font-family: var(--font-body);
+  font-size: 13.5px;
+  font-weight: 500;
+  text-align: left;
+  width: 100%;
+  border-left: 3px solid transparent;
+  transition: background .15s, color .15s;
+}
+.dtl-nav-item svg { width: 17px; height: 17px; flex-shrink: 0; opacity: 0.85; }
+.dtl-nav-item:hover { background: var(--surface); color: var(--text); }
+.dtl-nav-item.active {
+  background: var(--surface-2);
+  color: var(--accent);
+  border-left: 3px solid var(--accent);
+  padding-left: 9px;
+}
+.dtl-nav-item.active svg { opacity: 1; }
+.dtl-sidebar-foot {
+  border-top: 1px solid var(--border);
+  padding-top: 14px;
+  font-size: 10.5px;
+  color: var(--text-faint);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  padding-left: 10px;
+}
+
+/* ---------- MAIN ---------- */
+.dtl-main { min-width: 0; }
+.dtl-header {
+  position: sticky; top: 0; z-index: 20;
+  background: rgba(20,22,26,0.92);
+  backdrop-filter: blur(6px);
+  border-bottom: 1px solid var(--border);
+  padding: 22px 34px;
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 20px;
+}
+.dtl-header-title {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 24px;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  position: relative;
+  padding-left: 14px;
+}
+.dtl-header-title::before {
+  content: '';
+  position: absolute; left: 0; top: 3px; bottom: 3px; width: 4px;
+  background: repeating-linear-gradient(-45deg, var(--accent), var(--accent) 3px, transparent 3px, transparent 6px);
+  border-radius: 2px;
+}
+.dtl-header-sub { font-size: 12.5px; color: var(--text-faint); margin-top: 3px; padding-left: 14px; }
+.dtl-header-actions { display: flex; gap: 10px; align-items: center; }
+.dtl-clock { font-size: 12px; color: var(--text-faint); text-align: right; }
+.dtl-clock .d { color: var(--text-dim); font-weight: 600; }
+
+.dtl-view { padding: 28px 34px 60px 34px; }
+
+/* ---------- BUTTONS ---------- */
+.dtl-btn {
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 13px;
+  border-radius: 7px;
+  padding: 9px 16px;
+  border: 1px solid var(--border);
+  background: var(--surface-2);
+  color: var(--text);
+  cursor: pointer;
+  display: inline-flex; align-items: center; gap: 7px;
+  transition: transform .1s, border-color .15s, background .15s;
+  white-space: nowrap;
+}
+.dtl-btn svg { width: 14px; height: 14px; flex-shrink: 0; }
+.dtl-quicklinks { display: flex; flex-direction: column; gap: 6px; }
+.dtl-quicklink {
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 12px;
+  border-radius: 6px;
+  padding: 6px 10px;
+  border: 1px solid var(--border);
+  background: var(--surface-2);
+  color: var(--text-dim);
+  cursor: pointer;
+  display: flex; align-items: center; gap: 8px;
+  width: 100%;
+  transition: border-color .15s, color .15s, background .15s;
+}
+.dtl-quicklink svg { width: 13px; height: 13px; flex-shrink: 0; opacity: .8; }
+.dtl-quicklink:hover { color: var(--text); border-color: var(--text-faint); background: var(--surface); }
+.dtl-btn:hover { border-color: var(--text-faint); }
+.dtl-btn:active { transform: scale(0.97); }
+.dtl-btn-primary { background: var(--accent); color: #1a1305; border-color: var(--accent); }
+.dtl-btn-primary:hover { background: #f0ad4e; border-color: #f0ad4e; }
+.dtl-btn-ghost { background: transparent; }
+.dtl-btn-danger { background: transparent; color: var(--danger); border-color: rgba(226,87,76,0.4); }
+.dtl-btn-danger:hover { background: rgba(226,87,76,0.1); }
+.dtl-btn-sm { padding: 6px 11px; font-size: 12px; }
+.dtl-btn:disabled { opacity: .4; cursor: not-allowed; }
+.dtl-btn svg { width: 14px; height: 14px; flex-shrink: 0; }
+.dtl-quicklink { width: 100%; justify-content: flex-start; padding: 6px 10px; font-size: 12px; gap: 8px; }
+.dtl-quicklink svg { width: 13px; height: 13px; }
+.dtl-icon-btn {
+  width: 30px; height: 30px; border-radius: 6px; border: 1px solid var(--border);
+  background: var(--surface-2); color: var(--text-dim); display: flex; align-items: center; justify-content: center; cursor: pointer;
+}
+.dtl-icon-btn:hover { color: var(--text); border-color: var(--text-faint); }
+
+/* ---------- CARDS / GRID ---------- */
+.dtl-kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 14px; margin-bottom: 26px; }
+.dtl-kpi {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 18px 20px; position: relative; overflow: hidden;
+}
+.dtl-kpi .label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.07em; color: var(--text-faint); font-weight: 600; }
+.dtl-kpi .value { font-family: var(--font-display); font-size: 32px; font-weight: 600; color: var(--text); margin-top: 6px; }
+.dtl-kpi .value.accent { color: var(--accent); }
+.dtl-kpi .value.warn { color: var(--danger); }
+.dtl-kpi .sub { font-size: 11.5px; color: var(--text-faint); margin-top: 3px; }
+.dtl-kpi-icon { position: absolute; right: 14px; top: 14px; opacity: 0.16; }
+.dtl-kpi-icon svg { width: 34px; height: 34px; }
+
+.dtl-panel { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px 22px; }
+.dtl-panel + .dtl-panel { margin-top: 18px; }
+.dtl-panel-title {
+  font-family: var(--font-display); font-size: 14.5px; text-transform: uppercase; letter-spacing: 0.05em;
+  color: var(--text); margin-bottom: 14px; display: flex; align-items: center; justify-content: space-between;
+}
+.dtl-panel-title span.count { color: var(--text-faint); font-family: var(--font-body); font-weight: 500; font-size: 12px; }
+
+.dtl-two-col { display: grid; grid-template-columns: 1.4fr 1fr; gap: 18px; align-items: start; }
+@media (max-width: 980px) { .dtl-two-col { grid-template-columns: 1fr; } }
+
+.dtl-row-list { display: flex; flex-direction: column; gap: 8px; }
+.dtl-agenda-row {
+  display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 8px; background: var(--bg-elev); border: 1px solid var(--border);
+}
+.dtl-time-badge {
+  font-family: var(--font-display); font-size: 12.5px; color: var(--accent); background: var(--accent-soft);
+  border-radius: 6px; padding: 5px 9px; min-width: 64px; text-align: center; font-weight: 600;
+}
+.dtl-agenda-info { flex: 1; min-width: 0; }
+.dtl-agenda-info .client { font-weight: 600; font-size: 13.5px; }
+.dtl-agenda-info .service { font-size: 12px; color: var(--text-faint); }
+.dtl-pill { font-size: 10.5px; padding: 3px 9px; border-radius: 100px; text-transform: uppercase; letter-spacing: .04em; font-weight: 700; }
+.dtl-pill.scheduled { background: rgba(79,184,224,0.15); color: var(--accent-2); }
+.dtl-pill.done { background: rgba(76,175,109,0.15); color: var(--success); }
+.dtl-pill.canceled { background: rgba(226,87,76,0.15); color: var(--danger); }
+
+.dtl-empty { color: var(--text-faint); font-size: 12.5px; padding: 20px 4px; text-align: center; }
+
+.dtl-lowstock-row { display: flex; align-items: center; gap: 10px; padding: 9px 10px; border-left: 3px solid var(--danger); background: var(--bg-elev); border-radius: 0 8px 8px 0; }
+.dtl-lowstock-row .nm { font-weight: 600; font-size: 13px; flex: 1; }
+.dtl-lowstock-row .qty { font-size: 11.5px; color: var(--danger); font-family: var(--font-display); }
+
+/* ---------- TOOLBAR / SEARCH ---------- */
+.dtl-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 18px; flex-wrap: wrap; }
+.dtl-search {
+  background: var(--surface); border: 1px solid var(--border); border-radius: 7px; padding: 8px 12px;
+  color: var(--text); font-size: 13px; width: 240px; font-family: var(--font-body);
+}
+.dtl-search::placeholder { color: var(--text-faint); }
+.dtl-search:focus { outline: none; border-color: var(--accent); }
+.dtl-tabs { display: flex; gap: 6px; }
+.dtl-tab {
+  padding: 7px 14px; border-radius: 100px; font-size: 12.5px; font-weight: 600; cursor: pointer;
+  background: var(--surface); border: 1px solid var(--border); color: var(--text-dim);
+}
+.dtl-tab.active { background: var(--accent-soft); color: var(--accent); border-color: rgba(232,163,61,0.35); }
+
+/* ---------- CLIENT / INVENTORY CARDS ---------- */
+.dtl-card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap: 14px; }
+.dtl-card {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 16px 18px; cursor: pointer; transition: border-color .15s, transform .1s;
+}
+.dtl-card:hover { border-color: var(--text-faint); }
+.dtl-card-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; }
+.dtl-avatar {
+  width: 36px; height: 36px; border-radius: 8px; background: var(--surface-2); display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-display); font-weight: 600; font-size: 14px; color: var(--accent); flex-shrink: 0;
+}
+.dtl-client-name { font-weight: 700; font-size: 14.5px; margin-bottom: 2px; }
+.dtl-client-vehicle { font-size: 12px; color: var(--text-faint); }
+.dtl-client-meta { margin-top: 12px; font-size: 12px; color: var(--text-dim); display: flex; flex-direction: column; gap: 4px; }
+.dtl-client-meta div { display: flex; gap: 7px; align-items: center; }
+.dtl-client-meta svg { width: 13px; height: 13px; opacity: .6; flex-shrink: 0; }
+.dtl-last-service { margin-top: 12px; font-size: 11px; color: var(--text-faint); border-top: 1px solid var(--border); padding-top: 10px; }
+
+.dtl-inv-card { display: flex; flex-direction: column; gap: 10px; }
+.dtl-inv-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
+.dtl-inv-name { font-weight: 700; font-size: 14px; }
+.dtl-inv-cat { font-size: 10.5px; text-transform: uppercase; letter-spacing: .05em; color: var(--text-faint); margin-top: 3px; }
+.dtl-tag { font-size: 10px; padding: 3px 8px; border-radius: 5px; background: var(--surface-2); color: var(--text-dim); text-transform: uppercase; letter-spacing: .04em; font-weight: 700; }
+.dtl-tag.chemical { color: var(--accent-2); background: rgba(79,184,224,0.13); }
+.dtl-tag.tool { color: var(--accent); background: var(--accent-soft); }
+.dtl-stock-bar-track { height: 6px; border-radius: 4px; background: var(--bg-elev); overflow: hidden; border: 1px solid var(--border); }
+.dtl-stock-bar-fill { height: 100%; border-radius: 4px; background: var(--success); }
+.dtl-stock-bar-fill.low { background: var(--danger); }
+.dtl-stock-nums { display: flex; justify-content: space-between; font-size: 11px; color: var(--text-faint); }
+.dtl-inv-actions { display: flex; gap: 8px; margin-top: 2px; }
+
+/* ---------- CALENDAR ---------- */
+.dtl-cal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+.dtl-cal-month { font-family: var(--font-display); font-size: 19px; text-transform: uppercase; letter-spacing: .04em; }
+.dtl-cal-nav { display: flex; gap: 8px; }
+.dtl-cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
+.dtl-cal-dow { text-align: center; font-size: 10.5px; text-transform: uppercase; letter-spacing: .06em; color: var(--text-faint); font-weight: 700; padding-bottom: 6px; }
+.dtl-cal-cell {
+  min-height: 92px; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 7px;
+  cursor: pointer; display: flex; flex-direction: column; gap: 4px; transition: border-color .15s;
+}
+.dtl-cal-cell:hover { border-color: var(--text-faint); }
+.dtl-cal-cell.outside { opacity: 0.35; }
+.dtl-cal-cell.today { border-color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent); }
+.dtl-cal-daynum { font-family: var(--font-display); font-size: 12.5px; color: var(--text-dim); }
+.dtl-cal-cell.today .dtl-cal-daynum { color: var(--accent); }
+.dtl-cal-chip { font-size: 10px; background: var(--surface-2); border-left: 2px solid var(--accent-2); border-radius: 3px; padding: 2px 5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--text-dim); }
+.dtl-cal-more { font-size: 10px; color: var(--text-faint); padding-left: 3px; }
+
+/* ---------- PROCESS GUIDE ---------- */
+.dtl-guide-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 14px; }
+.dtl-guide-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px; cursor: pointer; }
+.dtl-guide-card:hover { border-color: var(--accent); }
+.dtl-guide-cat { font-size: 10.5px; text-transform: uppercase; letter-spacing: .06em; color: var(--accent); font-weight: 700; }
+.dtl-guide-name { font-family: var(--font-display); font-size: 17px; margin: 6px 0 8px 0; }
+.dtl-guide-meta { display: flex; gap: 14px; font-size: 11.5px; color: var(--text-faint); }
+.dtl-guide-meta span { display: flex; align-items: center; gap: 4px; }
+
+.dtl-dial-wrap { display: flex; align-items: center; gap: 16px; }
+.dtl-dial svg { display: block; }
+.dtl-dial-label { font-family: var(--font-display); font-size: 20px; }
+.dtl-dial-sub { font-size: 11px; color: var(--text-faint); }
+
+.dtl-step-list { display: flex; flex-direction: column; gap: 7px; margin-top: 4px; }
+.dtl-step {
+  display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 8px; background: var(--bg-elev); border: 1px solid var(--border);
+  cursor: pointer; transition: background .15s;
+}
+.dtl-step.checked { border-color: rgba(76,175,109,0.4); }
+.dtl-step.checked .step-text { text-decoration: line-through; color: var(--text-faint); }
+.dtl-step-num {
+  width: 22px; height: 22px; border-radius: 5px; background: var(--surface-2); color: var(--text-dim); font-family: var(--font-display); font-size: 11px;
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.dtl-step.checked .dtl-step-num { background: var(--success); color: #0d1a12; }
+.dtl-step .step-text { font-size: 13px; flex: 1; }
+
+.dtl-need-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 16px; }
+.dtl-need-title { font-size: 11px; text-transform: uppercase; letter-spacing: .06em; color: var(--text-faint); font-weight: 700; margin-bottom: 8px; }
+.dtl-need-list { display: flex; flex-direction: column; gap: 5px; }
+.dtl-need-item { font-size: 12.5px; color: var(--text-dim); display: flex; gap: 7px; align-items: center; }
+.dtl-need-item::before { content: ''; width: 5px; height: 5px; border-radius: 50%; background: var(--accent-2); flex-shrink: 0; }
+
+/* ---------- INVOICES / PRICING ---------- */
+.dtl-invoice-row {
+  display: flex; align-items: center; gap: 14px; padding: 12px 14px; border-radius: 8px; background: var(--surface);
+  border: 1px solid var(--border); cursor: pointer; transition: border-color .15s;
+}
+.dtl-invoice-row:hover { border-color: var(--text-faint); }
+.dtl-invoice-num { font-family: var(--font-display); font-size: 13px; color: var(--violet); min-width: 78px; }
+.dtl-invoice-info { flex: 1; min-width: 0; }
+.dtl-invoice-info .client { font-weight: 700; font-size: 13.5px; }
+.dtl-invoice-info .meta { font-size: 11.5px; color: var(--text-faint); }
+.dtl-invoice-total { font-family: var(--font-display); font-size: 15px; }
+.dtl-pill.paid { background: rgba(76,175,109,0.15); color: var(--success); }
+.dtl-pill.unpaid { background: rgba(226,87,76,0.15); color: var(--danger); }
+
+.dtl-price-row {
+  display: flex; align-items: center; gap: 14px; padding: 12px 14px; border-radius: 8px; background: var(--surface);
+  border: 1px solid var(--border); cursor: pointer;
+}
+.dtl-price-row:hover { border-color: var(--text-faint); }
+.dtl-price-row.addon { border-left: 3px solid var(--rose); }
+.dtl-price-row.addon .dtl-price-amt { color: var(--rose); }
+.dtl-price-info { flex: 1; min-width: 0; }
+.dtl-price-info .svc { font-weight: 700; font-size: 13.5px; }
+.dtl-price-info .note { font-size: 11.5px; color: var(--text-faint); }
+.dtl-price-amt { font-family: var(--font-display); font-size: 16px; color: var(--violet); }
+
+.dtl-lineitem-row { display: grid; grid-template-columns: 1fr 60px 90px 28px; gap: 8px; margin-bottom: 8px; align-items: center; }
+.dtl-lineitem-row select, .dtl-lineitem-row input { width: 100%; }
+.dtl-invoice-total-line { display: flex; justify-content: space-between; align-items: center; padding: 12px 0 4px 0; margin-top: 6px; border-top: 1px dashed var(--border); }
+.dtl-invoice-total-line .lbl { font-size: 12px; color: var(--text-faint); text-transform: uppercase; letter-spacing: .05em; font-weight: 700; }
+.dtl-invoice-total-line .amt { font-family: var(--font-display); font-size: 22px; color: var(--violet); }
+
+/* ---------- MODAL ---------- */
+.dtl-modal-overlay {
+  position: fixed; inset: 0; background: rgba(10,11,13,0.72); backdrop-filter: blur(2px);
+  display: flex; align-items: center; justify-content: center; z-index: 1000; padding: 20px;
+}
+.dtl-modal {
+  background: var(--bg-elev); border: 1px solid var(--border); border-radius: 14px; width: 100%; max-width: 560px;
+  max-height: 86vh; display: flex; flex-direction: column; box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+  border-top: 3px solid var(--border);
+  overflow: hidden;
+}
+.dtl-modal-head {
+  display: flex; align-items: center; gap: 12px; padding: 18px 22px; border-bottom: 1px solid var(--border);
+  background: var(--bg-elev);
+}
+.dtl-modal-headtext { flex: 1; min-width: 0; }
+.dtl-modal-title { font-family: var(--font-display); font-size: 16px; text-transform: uppercase; letter-spacing: .03em; }
+.dtl-modal-subtitle { font-size: 11.5px; color: var(--text-faint); margin-top: 2px; }
+.dtl-modal-icon {
+  width: 36px; height: 36px; border-radius: 9px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  background: var(--surface-2); color: var(--text-dim);
+}
+.dtl-modal-icon svg { width: 18px; height: 18px; }
+.dtl-modal-body { padding: 20px 22px; overflow-y: auto; }
+.dtl-modal-foot { padding: 16px 22px; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: 10px; background: var(--bg-elev); }
+.dtl-close-x { background: none; border: none; color: var(--text-faint); cursor: pointer; font-size: 18px; line-height: 1; padding: 4px; }
+.dtl-close-x:hover { color: var(--text); }
+
+/* modal color variants */
+.dtl-modal.variant-client { border-top-color: var(--accent-2); }
+.dtl-modal.variant-client .dtl-modal-head { background: linear-gradient(135deg, rgba(79,184,224,0.10), transparent 60%); }
+.dtl-modal.variant-client .dtl-modal-icon { background: rgba(79,184,224,0.14); color: var(--accent-2); }
+.dtl-modal.variant-client .dtl-btn-primary { background: var(--accent-2); border-color: var(--accent-2); color: #0c2430; }
+.dtl-modal.variant-client .dtl-btn-primary:hover { background: #6ac6e8; border-color: #6ac6e8; }
+.dtl-modal.variant-client .dtl-field input:focus, .dtl-modal.variant-client .dtl-field select:focus, .dtl-modal.variant-client .dtl-field textarea:focus { border-color: var(--accent-2); }
+
+.dtl-modal.variant-inventory { border-top-color: var(--accent); }
+.dtl-modal.variant-inventory .dtl-modal-head { background: linear-gradient(135deg, rgba(232,163,61,0.10), transparent 60%); }
+.dtl-modal.variant-inventory .dtl-modal-icon { background: var(--accent-soft); color: var(--accent); }
+.dtl-modal.variant-inventory .dtl-field input:focus, .dtl-modal.variant-inventory .dtl-field select:focus, .dtl-modal.variant-inventory .dtl-field textarea:focus { border-color: var(--accent); }
+
+.dtl-modal.variant-calendar { border-top-color: var(--success); }
+.dtl-modal.variant-calendar .dtl-modal-head { background: linear-gradient(135deg, rgba(76,175,109,0.10), transparent 60%); }
+.dtl-modal.variant-calendar .dtl-modal-icon { background: rgba(76,175,109,0.14); color: var(--success); }
+.dtl-modal.variant-calendar .dtl-btn-primary { background: var(--success); border-color: var(--success); color: #0d1f13; }
+.dtl-modal.variant-calendar .dtl-btn-primary:hover { background: #66c98a; border-color: #66c98a; }
+.dtl-modal.variant-calendar .dtl-field input:focus, .dtl-modal.variant-calendar .dtl-field select:focus, .dtl-modal.variant-calendar .dtl-field textarea:focus { border-color: var(--success); }
+
+.dtl-modal.variant-invoice { border-top-color: var(--violet); }
+.dtl-modal.variant-invoice .dtl-modal-head { background: linear-gradient(135deg, rgba(185,138,240,0.12), transparent 60%); }
+.dtl-modal.variant-invoice .dtl-modal-icon { background: var(--violet-soft); color: var(--violet); }
+.dtl-modal.variant-invoice .dtl-btn-primary { background: var(--violet); border-color: var(--violet); color: #1c1428; }
+.dtl-modal.variant-invoice .dtl-btn-primary:hover { background: #caa2f5; border-color: #caa2f5; }
+.dtl-modal.variant-invoice .dtl-field input:focus, .dtl-modal.variant-invoice .dtl-field select:focus, .dtl-modal.variant-invoice .dtl-field textarea:focus { border-color: var(--violet); }
+
+.dtl-modal.variant-pricing { border-top-color: var(--rose); }
+.dtl-modal.variant-pricing .dtl-modal-head { background: linear-gradient(135deg, rgba(239,130,171,0.12), transparent 60%); }
+.dtl-modal.variant-pricing .dtl-modal-icon { background: var(--rose-soft); color: var(--rose); }
+.dtl-modal.variant-pricing .dtl-btn-primary { background: var(--rose); border-color: var(--rose); color: #2b0f1b; }
+.dtl-modal.variant-pricing .dtl-btn-primary:hover { background: #f7a8c4; border-color: #f7a8c4; }
+.dtl-modal.variant-pricing .dtl-field input:focus, .dtl-modal.variant-pricing .dtl-field select:focus, .dtl-modal.variant-pricing .dtl-field textarea:focus { border-color: var(--rose); }
+
+.dtl-modal.variant-process { border-top-color: var(--teal); }
+.dtl-modal.variant-process .dtl-modal-head { background: linear-gradient(135deg, rgba(73,199,184,0.12), transparent 60%); }
+.dtl-modal.variant-process .dtl-modal-icon { background: var(--teal-soft); color: var(--teal); }
+.dtl-modal.variant-process .dtl-btn-primary { background: var(--teal); border-color: var(--teal); color: #07211f; }
+.dtl-modal.variant-process .dtl-btn-primary:hover { background: #7fe0d6; border-color: #7fe0d6; }
+.dtl-modal.variant-process .dtl-field input:focus, .dtl-modal.variant-process .dtl-field select:focus, .dtl-modal.variant-process .dtl-field textarea:focus { border-color: var(--teal); }
+
+/* header "top right" action button — colored per page */
+.dtl-btn-accent-client { background: var(--accent-2); border-color: var(--accent-2); color: #0c2430; }
+.dtl-btn-accent-client:hover { background: #6ac6e8; border-color: #6ac6e8; }
+.dtl-btn-accent-inventory { background: var(--accent); border-color: var(--accent); color: #1a1305; }
+.dtl-btn-accent-inventory:hover { background: #f0ad4e; border-color: #f0ad4e; }
+.dtl-btn-accent-calendar { background: var(--success); border-color: var(--success); color: #0d1f13; }
+.dtl-btn-accent-calendar:hover { background: #66c98a; border-color: #66c98a; }
+.dtl-btn-accent-process { background: var(--teal); border-color: var(--teal); color: #07211f; }
+.dtl-btn-accent-process:hover { background: #7fe0d6; border-color: #7fe0d6; }
+.dtl-btn-accent-invoice { background: var(--violet); border-color: var(--violet); color: #1c1428; }
+.dtl-btn-accent-invoice:hover { background: #caa2f5; border-color: #caa2f5; }
+.dtl-btn-accent-pricing { background: var(--rose); border-color: var(--rose); color: #2b0f1b; }
+.dtl-btn-accent-pricing:hover { background: #f7a8c4; border-color: #f7a8c4; }
+
+.dtl-field { margin-bottom: 14px; }
+.dtl-field label { display: block; font-size: 11.5px; text-transform: uppercase; letter-spacing: .05em; color: var(--text-faint); font-weight: 700; margin-bottom: 6px; }
+.dtl-field input, .dtl-field select, .dtl-field textarea {
+  width: 100%; background: var(--surface); border: 1px solid var(--border); border-radius: 7px; padding: 9px 11px;
+  color: var(--text); font-size: 13.5px; font-family: var(--font-body);
+}
+.dtl-field input:focus, .dtl-field select:focus, .dtl-field textarea:focus { outline: none; border-color: var(--accent); }
+.dtl-field textarea { resize: vertical; min-height: 60px; }
+.dtl-field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.dtl-dyn-row { display: flex; gap: 8px; margin-bottom: 8px; }
+.dtl-dyn-row input { flex: 1; }
+.dtl-add-line { font-size: 12px; color: var(--accent); background: none; border: none; cursor: pointer; padding: 4px 0; font-weight: 600; }
+
+.dtl-toast {
+  position: fixed; bottom: 24px; right: 24px; background: var(--surface-2); border: 1px solid var(--border);
+  border-left: 3px solid var(--success); color: var(--text); padding: 12px 18px; border-radius: 8px; font-size: 13px;
+  z-index: 2000; box-shadow: 0 10px 30px rgba(0,0,0,0.4); opacity: 0; transform: translateY(8px); transition: all .25s;
+}
+.dtl-toast.show { opacity: 1; transform: translateY(0); }
+
+@media (max-width: 760px) {
+  .dtl-root { grid-template-columns: 1fr; }
+  .dtl-sidebar { position: static; height: auto; flex-direction: row; overflow-x: auto; }
+  .dtl-brand { display: none; }
+  .dtl-nav { flex-direction: row; }
+  .dtl-sidebar-foot { display: none; }
+  .dtl-header { padding: 16px 18px; flex-wrap: wrap; }
+  .dtl-view { padding: 18px; }
+  .dtl-field-row, .dtl-need-cols { grid-template-columns: 1fr; }
+}
+
+/* ---------- AUTH GATE ---------- */
+.dtl-auth-gate {
+  min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px;
+  background: radial-gradient(circle at 30% 20%, rgba(232,163,61,0.06), transparent 45%), var(--bg, #14161a);
+}
+.dtl-auth-card {
+  width: 100%; max-width: 380px; background: var(--bg-elev, #1b1e24); border: 1px solid var(--border, #333846);
+  border-radius: 14px; padding: 30px 28px; box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+}
+.dtl-auth-brand { display: flex; align-items: center; gap: 10px; margin-bottom: 22px; }
+.dtl-auth-brand .name { font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 19px; letter-spacing: .06em; text-transform: uppercase; color: var(--text, #edebe5); }
+.dtl-auth-brand .tag { font-size: 10.5px; color: var(--text-faint, #676d79); letter-spacing: .08em; text-transform: uppercase; }
+.dtl-auth-title { font-family: 'Oswald', sans-serif; font-size: 17px; text-transform: uppercase; letter-spacing: .03em; color: var(--text, #edebe5); margin-bottom: 4px; }
+.dtl-auth-sub { font-size: 12.5px; color: var(--text-faint, #676d79); margin-bottom: 20px; }
+.dtl-auth-tabs { display: flex; gap: 6px; margin-bottom: 18px; }
+.dtl-auth-tab {
+  flex: 1; text-align: center; padding: 8px; border-radius: 7px; font-size: 12.5px; font-weight: 600; cursor: pointer;
+  background: var(--surface, #20242c); border: 1px solid var(--border, #333846); color: var(--text-dim, #9aa0ac);
+}
+.dtl-auth-tab.active { background: var(--accent-soft, #3a2f1c); color: var(--accent, #e8a33d); border-color: rgba(232,163,61,0.35); }
+.dtl-auth-error { font-size: 12px; color: var(--danger, #e2574c); margin-top: 10px; min-height: 16px; }
+.dtl-auth-note { font-size: 11px; color: var(--text-faint, #676d79); margin-top: 16px; line-height: 1.5; }
+</style>
+
+<div class="dtl-auth-gate" id="dtl-auth-gate">
+  <div class="dtl-auth-card">
+    <div class="dtl-auth-brand">
+      <div class="dtl-brand-mark">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 13l1.5-5A2 2 0 0 1 6.4 6.5h11.2a2 2 0 0 1 1.9 1.5L21 13" stroke="#14161a" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><rect x="2.2" y="13" width="19.6" height="5.5" rx="1.4" stroke="#14161a" stroke-width="1.8"/><circle cx="6.5" cy="18.5" r="1.6" fill="#14161a"/><circle cx="17.5" cy="18.5" r="1.6" fill="#14161a"/></svg>
+      </div>
+      <div><div class="name">Lustre</div><div class="tag">Detail Shop OS</div></div>
+    </div>
+    <div class="dtl-auth-tabs">
+      <div class="dtl-auth-tab active" id="dtl-tab-signin" data-authtab="signin">Sign In</div>
+      <div class="dtl-auth-tab" id="dtl-tab-signup" data-authtab="signup">Create Account</div>
+    </div>
+    <div class="dtl-auth-title" id="dtl-auth-title">Welcome back</div>
+    <div class="dtl-auth-sub" id="dtl-auth-sub">Sign in to sync your data across every device.</div>
+    <div class="dtl-field"><label>Email</label><input type="email" id="f-auth-email" placeholder="you@email.com" autocomplete="username"></div>
+    <div class="dtl-field"><label>Password</label><input type="password" id="f-auth-password" placeholder="••••••••" autocomplete="current-password"></div>
+    <button class="dtl-btn dtl-btn-primary" id="dtl-auth-submit" style="width:100%; justify-content:center; margin-top:6px;">Sign In</button>
+    <div class="dtl-auth-error" id="dtl-auth-error"></div>
+    <div class="dtl-auth-note">This account only exists to sync your own data across your devices. Nobody else can create data under it unless they know your password.</div>
+  </div>
+</div>
+
+<div class="dtl-root" id="dtl-root" style="display:none;">
+  <aside class="dtl-sidebar">
+    <div class="dtl-brand">
+      <div class="dtl-brand-mark">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 13l1.5-5A2 2 0 0 1 6.4 6.5h11.2a2 2 0 0 1 1.9 1.5L21 13" stroke="#14161a" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><rect x="2.2" y="13" width="19.6" height="5.5" rx="1.4" stroke="#14161a" stroke-width="1.8"/><circle cx="6.5" cy="18.5" r="1.6" fill="#14161a"/><circle cx="17.5" cy="18.5" r="1.6" fill="#14161a"/></svg>
+      </div>
+      <div class="dtl-brand-text">
+        <div class="name">Lustre</div>
+        <div class="tag">Detail Shop OS</div>
+      </div>
+    </div>
+    <nav class="dtl-nav" id="dtl-nav"></nav>
+    <div class="dtl-sidebar-foot">
+      <div style="margin-bottom:8px; color:var(--text-dim); font-size:11px;" id="dtl-account-email">Synced &middot; v1.0</div>
+      <div style="display:flex; gap:6px; flex-wrap:wrap;">
+        <button class="dtl-icon-btn" id="dtl-export-btn" title="Export backup (.json)" style="width:auto; padding:0 8px; font-size:11px;">Export</button>
+        <button class="dtl-icon-btn" id="dtl-import-btn" title="Import backup (.json)" style="width:auto; padding:0 8px; font-size:11px;">Import</button>
+        <button class="dtl-icon-btn" id="dtl-logout-btn" title="Log out" style="width:auto; padding:0 8px; font-size:11px;">Log Out</button>
+      </div>
+      <input type="file" id="dtl-import-file" accept="application/json" style="display:none;">
+    </div>
+  </aside>
+
+  <main class="dtl-main">
+    <header class="dtl-header">
+      <div>
+        <div class="dtl-header-title" id="dtl-page-title">Dashboard</div>
+        <div class="dtl-header-sub" id="dtl-page-sub">Today's overview</div>
+      </div>
+      <div class="dtl-header-actions">
+        <div class="dtl-clock" id="dtl-clock"></div>
+        <div id="dtl-header-action"></div>
+      </div>
+    </header>
+    <div class="dtl-view" id="dtl-view">
+      <div class="dtl-empty">Loading&hellip;</div>
+    </div>
+  </main>
+</div>
+
+<div id="dtl-modal-root"></div>
+<div id="dtl-toast-root"></div>
+
+<script>
+(function(){
+
+/* ============================ ICONS ============================ */
+const ICONS = {
+  dashboard: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="8" height="8" rx="1.5"/><rect x="13" y="3" width="8" height="5" rx="1.5"/><rect x="13" y="10" width="8" height="11" rx="1.5"/><rect x="3" y="13" width="8" height="8" rx="1.5"/></svg>',
+  clients: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><circle cx="17" cy="7.5" r="2.4"/><path d="M15.5 13.2c2.6.3 4.7 2.6 4.7 5.3"/></svg>',
+  inventory: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 8l9-5 9 5-9 5-9-5z"/><path d="M3 8v9l9 5 9-5V8"/><path d="M12 13v9"/></svg>',
+  calendar: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18"/><path d="M8 3v4"/><path d="M16 3v4"/></svg>',
+  process: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 5l-2 2 2 2" transform="translate(-1 0)"/><path d="M4 7h5"/><path d="M4 12h16"/><path d="M4 17h16"/><path d="M15 12l1.5 1.5L20 10"/></svg>',
+  phone: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 5c0 8.8 6.2 15 15 15l2-3.6-5-2-1.5 1.9A11.6 11.6 0 0 1 8.7 9.5L10.6 8 8.6 3 4 5z"/></svg>',
+  mail: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 6l9 7 9-7"/></svg>',
+  car: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 13l1.5-5A2 2 0 0 1 6.4 6.5h11.2a2 2 0 0 1 1.9 1.5L21 13"/><rect x="2.2" y="13" width="19.6" height="5.5" rx="1.4"/><circle cx="6.5" cy="18.5" r="1.6"/><circle cx="17.5" cy="18.5" r="1.6"/></svg>',
+  clock: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg>',
+  jobs: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="7" width="18" height="14" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M3 12h18"/></svg>',
+  invoices: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2V3z"/><path d="M9 8h6"/><path d="M9 12h6"/><path d="M9 16h3"/></svg>',
+  dollar: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2v20"/><path d="M17 6.5c0-1.9-2.2-3.5-5-3.5s-5 1.4-5 3.5 2.2 3 5 3.5 5 1.6 5 3.5-2.2 3.5-5 3.5-5-1.6-5-3.5"/></svg>',
+  warn: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3l10 18H2L12 3z"/><path d="M12 10v4"/><circle cx="12" cy="17" r="0.6" fill="currentColor"/></svg>',
+  plus: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 5v14M5 12h14"/></svg>',
+  chevL: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M15 6l-6 6 6 6"/></svg>',
+  chevR: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M9 6l6 6-6 6"/></svg>',
+  trash: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 7h16"/><path d="M9 7V4h6v3"/><path d="M6 7l1 13h10l1-13"/></svg>',
+  edit: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z"/></svg>',
+};
+
+/* ============================ SUPABASE CONFIG ============================
+   Fill these in with your own project's values (Supabase dashboard -> Settings -> API).
+   The "anon" key is meant to be public in frontend code — real security comes from
+   the Row Level Security policies set up on the app_data table (see setup SQL). */
+const SUPABASE_URL = 'sb_publishable_TsS8bChv-2eRc5cfh9OgFg_Rg-uDhhE';       // e.g. https://xxxxx.supabase.co
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVmanZ4am5mcXJjZ3d4d3hpc3BmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODYwNjgyMjUsImV4cCI6MjEwMTY0NDIyNX0.hdhcZ0artBY3EEzsfV_bIAb1kPbPAbVp-19F8ioD_yY';      // Settings -> API -> anon public key
+
+const supabase = (SUPABASE_URL.startsWith('http') && window.supabase)
+  ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+  : null;
+
+/* ============================ STATE ============================ */
+let DATA = { clients: [], inventory: [], events: [], guides: [] };
+let VIEW = 'dashboard';
+let CAL_DATE = new Date();
+let ACTIVE_GUIDE_ID = null;
+let GUIDE_PROGRESS = {}; // guideId -> Set of checked step ids (in-memory, per session)
+let INV_FILTER = 'all';
+let CLIENT_SEARCH = '';
+let INVOICE_TAB = 'invoices'; // 'invoices' | 'pricing'
+let CURRENT_USER = null;
+
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+const todayStr = () => new Date().toISOString().slice(0, 10);
+const fmtDate = (iso) => {
+  const d = new Date(iso + 'T00:00:00');
+  return d.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
+};
+const fmtTime = (t) => {
+  if (!t) return '';
+  const [h, m] = t.split(':').map(Number);
+  const ampm = h >= 12 ? 'PM' : 'AM';
+  const hh = ((h + 11) % 12) + 1;
+  return hh + ':' + String(m).padStart(2, '0') + ' ' + ampm;
+};
+
+/* ============================ SEED DATA ============================ */
+function seedData() {
+  const t = new Date();
+  const iso = (offsetDays) => {
+    const d = new Date(t);
+    d.setDate(d.getDate() + offsetDays);
+    return d.toISOString().slice(0, 10);
+  };
+  return {
+    clients: [
+      { id: uid(), name: 'John Carter', phone: '(555) 214-9087', email: 'john.carter@email.com', vehicle: '2023 Tesla Model 3', address: '412 Birchwood Ln', notes: 'Prefers ceramic coating touch-ups quarterly.', lastService: iso(-14) },
+      { id: uid(), name: 'Maria Lopez', phone: '(555) 887-2201', email: 'maria.lopez@email.com', vehicle: '2021 Ford F-150', address: '88 Ranch Rd', notes: 'Dog hair heavy — bring pet hair tool.', lastService: iso(-30) },
+      { id: uid(), name: 'David Kim', phone: '(555) 340-6612', email: 'dkim@email.com', vehicle: '2022 BMW 330i', address: '19 Crestview Ct', notes: 'Very particular about swirl marks.', lastService: iso(-3) },
+    ],
+    inventory: [
+      { id: uid(), name: 'pH Neutral Car Shampoo', category: 'chemical', qty: 4, unit: 'gal', lowThreshold: 2, notes: '' },
+      { id: uid(), name: 'Snow Foam Pre-Wash', category: 'chemical', qty: 1, unit: 'gal', lowThreshold: 2, notes: 'Reorder soon' },
+      { id: uid(), name: 'Ceramic Coating Kit', category: 'chemical', qty: 3, unit: 'kits', lowThreshold: 2, notes: '' },
+      { id: uid(), name: 'All-Purpose Cleaner (APC)', category: 'chemical', qty: 1, unit: 'gal', lowThreshold: 2, notes: '' },
+      { id: uid(), name: 'Leather Conditioner', category: 'chemical', qty: 5, unit: 'bottles', lowThreshold: 2, notes: '' },
+      { id: uid(), name: 'Microfiber Towels', category: 'tool', qty: 42, unit: 'pcs', lowThreshold: 15, notes: '' },
+      { id: uid(), name: 'Dual-Action Polisher', category: 'tool', qty: 2, unit: 'units', lowThreshold: 1, notes: '' },
+      { id: uid(), name: 'Foam Cannon', category: 'tool', qty: 1, unit: 'units', lowThreshold: 1, notes: 'Backup on order' },
+      { id: uid(), name: 'Wheel Brush Set', category: 'tool', qty: 3, unit: 'sets', lowThreshold: 1, notes: '' },
+      { id: uid(), name: 'Clay Bar', category: 'chemical', qty: 6, unit: 'pcs', lowThreshold: 3, notes: '' },
+    ],
+    events: [],
+    guides: [
+      {
+        id: uid(), name: 'Full Interior Detail', category: 'Interior', estTime: '90 min',
+        steps: [
+          'Remove floor mats and loose items',
+          'Vacuum seats, carpets, and trunk',
+          'Vacuum crevices and vents with brush attachment',
+          'Apply APC to plastics, let dwell',
+          'Wipe down dash, console, and doors',
+          'Clean and condition leather / vinyl surfaces',
+          'Clean interior glass',
+          'Shampoo carpets and mats if needed',
+          'Steam clean vents and crevices',
+          'Final wipe-down and fragrance',
+        ],
+        products: ['All-Purpose Cleaner (APC)', 'Leather cleaner & conditioner', 'Glass cleaner', 'Carpet shampoo', 'Interior dressing'],
+        tools: ['Vacuum', 'Detail brushes', 'Microfiber towels', 'Steamer', 'Extractor'],
+      },
+      {
+        id: uid(), name: 'Exterior Wash & Wax', category: 'Exterior', estTime: '75 min',
+        steps: [
+          'Rinse vehicle to remove loose dirt',
+          'Apply snow foam pre-wash, dwell 5 min',
+          'Two-bucket hand wash — wheels first, then body',
+          'Clay bar decontamination if needed',
+          'Rinse and dry with microfiber towels',
+          'Apply spray wax or sealant',
+          'Dress tires and trim',
+          'Clean exterior glass',
+          'Final inspection under light',
+        ],
+        products: ['Snow foam', 'pH neutral car shampoo', 'Clay lube & clay bar', 'Spray wax / sealant', 'Tire dressing', 'Glass cleaner'],
+        tools: ['Foam cannon', 'Wash mitts (x2)', 'Wheel brushes', 'Drying towels', 'Applicator pads'],
+      },
+      {
+        id: uid(), name: 'Paint Correction & Ceramic Coating', category: 'Paint Correction', estTime: '5 hrs',
+        steps: [
+          'Full wash and decontamination (wash, clay, iron remover)',
+          'Tape off trim and badges',
+          'Inspect paint under light, mark defects',
+          'Compound pass with rotary or DA polisher',
+          'Polish pass to refine finish',
+          'Wipe down with IPA panel prep',
+          'Apply ceramic coating in sections',
+          'Level and buff excess coating',
+          'Cure — no water contact for 24–48 hrs',
+          'Final inspection and customer walkthrough',
+        ],
+        products: ['Iron remover', 'Clay lube', 'Compound', 'Polish', 'IPA panel wipe', 'Ceramic coating'],
+        tools: ['DA / rotary polisher', 'Cutting & finishing pads', 'Inspection light', 'Suede applicator', 'Painters tape'],
+      },
+      {
+        id: uid(), name: 'Engine Bay Detail', category: 'Engine', estTime: '40 min',
+        steps: [
+          'Let engine cool, cover sensitive electronics',
+          'Apply degreaser to engine bay, let dwell',
+          'Agitate with detail brushes',
+          'Rinse with low-pressure water',
+          'Dry with compressed air and towels',
+          'Dress plastics and hoses',
+          'Final wipe-down',
+        ],
+        products: ['Engine degreaser', 'Plastic & rubber dressing'],
+        tools: ['Detail brushes', 'Plastic covers / bags', 'Compressed air', 'Low-pressure sprayer'],
+      },
+    ],
+    pricing: [
+      { id: uid(), service: 'Full Interior Detail', price: 150, notes: 'Sedans & small SUVs', category: 'service' },
+      { id: uid(), service: 'Exterior Wash & Wax', price: 90, notes: '', category: 'service' },
+      { id: uid(), service: 'Paint Correction & Ceramic Coating', price: 650, notes: 'Full day, includes 2yr coating', category: 'service' },
+      { id: uid(), service: 'Engine Bay Detail', price: 50, notes: 'Add-on friendly', category: 'service' },
+      { id: uid(), service: 'Large Vehicle Surcharge', price: 25, notes: 'Trucks, vans, 3-row SUVs', category: 'service' },
+      { id: uid(), service: 'Pet Hair Removal', price: 25, notes: 'Per row of seating', category: 'addon' },
+      { id: uid(), service: 'Odor / Ozone Treatment', price: 35, notes: '', category: 'addon' },
+      { id: uid(), service: 'Headlight Restoration', price: 40, notes: 'Both headlights', category: 'addon' },
+      { id: uid(), service: 'Trim & Plastic Restoration', price: 30, notes: '', category: 'addon' },
+      { id: uid(), service: 'Wheel & Caliper Detail', price: 35, notes: 'Per set of 4', category: 'addon' },
+    ],
+    invoices: [],
+  };
+}
+
+/* ============================ STORAGE ============================ */
+async function loadData() {
+  const seeded = seedData();
+  const keys = ['clients', 'inventory', 'events', 'guides', 'pricing', 'invoices'];
+  let rows = [];
+  try {
+    const { data, error } = await supabase.from('app_data').select('key, value');
+    if (error) throw error;
+    rows = data || [];
+  } catch (e) {
+    console.error('Could not load cloud data', e);
+    toast('Could not load your data — check your connection');
+  }
+  const byKey = {};
+  rows.forEach(r => { byKey[r.key] = r.value; });
+  for (const key of keys) {
+    if (byKey[key] !== undefined && byKey[key] !== null) {
+      DATA[key] = byKey[key];
+    } else {
+      DATA[key] = seeded[key];
+      await persist(key); // first time for this account — seed a starter row in the cloud
+    }
+  }
+  // seed a couple of calendar events relative to today, once
+  if (!DATA.events || DATA.events.length === 0) {
+    const iso = (offsetDays) => { const d = new Date(); d.setDate(d.getDate() + offsetDays); return d.toISOString().slice(0, 10); };
+    DATA.events = [
+      { id: uid(), date: iso(0), time: '10:00', clientId: DATA.clients[0]?.id || '', clientName: DATA.clients[0]?.name || 'John Carter', service: 'Exterior Wash & Wax', status: 'scheduled', notes: '' },
+      { id: uid(), date: iso(1), time: '13:00', clientId: DATA.clients[1]?.id || '', clientName: DATA.clients[1]?.name || 'Maria Lopez', service: 'Full Interior Detail', status: 'scheduled', notes: 'Pet hair — bring extra tool' },
+      { id: uid(), date: iso(4), time: '09:00', clientId: DATA.clients[2]?.id || '', clientName: DATA.clients[2]?.name || 'David Kim', service: 'Paint Correction & Ceramic Coating', status: 'scheduled', notes: 'Full day booking' },
+      { id: uid(), date: iso(-2), time: '11:00', clientId: DATA.clients[0]?.id || '', clientName: DATA.clients[0]?.name || 'John Carter', service: 'Engine Bay Detail', status: 'done', notes: '' },
+    ];
+    await persist('events');
+  }
+  if (!DATA.invoices || DATA.invoices.length === 0) {
+    const c = DATA.clients[2] || DATA.clients[0];
+    if (c) {
+      const iso = (offsetDays) => { const d = new Date(); d.setDate(d.getDate() + offsetDays); return d.toISOString().slice(0, 10); };
+      DATA.invoices = [{
+        id: uid(), number: 'INV-1001', clientId: c.id, clientName: c.name, date: iso(-3), status: 'unpaid',
+        items: [{ id: uid(), desc: 'Paint Correction & Ceramic Coating', qty: 1, price: 650 }],
+        notes: '',
+      }];
+      await persist('invoices');
+    }
+  }
+}
+async function persist(key) {
+  if (!supabase || !CURRENT_USER) return;
+  try {
+    const { error } = await supabase.from('app_data').upsert(
+      { user_id: CURRENT_USER.id, key, value: DATA[key], updated_at: new Date().toISOString() },
+      { onConflict: 'user_id,key' }
+    );
+    if (error) throw error;
+  } catch (e) {
+    console.error('storage error', e);
+    toast('Sync failed — check your connection');
+  }
+}
+
+/* ============================ TOAST ============================ */
+function toast(msg) {
+  const root = document.getElementById('dtl-toast-root');
+  const el = document.createElement('div');
+  el.className = 'dtl-toast';
+  el.textContent = msg;
+  root.appendChild(el);
+  requestAnimationFrame(() => el.classList.add('show'));
+  setTimeout(() => { el.classList.remove('show'); setTimeout(() => el.remove(), 300); }, 2400);
+}
+
+/* ============================ MODAL ============================ */
+function openModal({ title, subtitle, icon, variant, bodyHTML, footHTML, onMount }) {
+  const root = document.getElementById('dtl-modal-root');
+  const variantClass = variant ? `variant-${variant}` : '';
+  root.innerHTML = `
+    <div class="dtl-modal-overlay" id="dtl-overlay">
+      <div class="dtl-modal ${variantClass}">
+        <div class="dtl-modal-head">
+          ${icon ? `<div class="dtl-modal-icon">${icon}</div>` : ''}
+          <div class="dtl-modal-headtext">
+            <div class="dtl-modal-title">${title}</div>
+            ${subtitle ? `<div class="dtl-modal-subtitle">${subtitle}</div>` : ''}
+          </div>
+          <button class="dtl-close-x" id="dtl-modal-close">&times;</button>
+        </div>
+        <div class="dtl-modal-body">${bodyHTML}</div>
+        ${footHTML ? `<div class="dtl-modal-foot">${footHTML}</div>` : ''}
+      </div>
+    </div>`;
+  document.getElementById('dtl-modal-close').onclick = closeModal;
+  document.getElementById('dtl-overlay').addEventListener('click', (e) => { if (e.target.id === 'dtl-overlay') closeModal(); });
+  if (onMount) onMount();
+}
+function closeModal() { document.getElementById('dtl-modal-root').innerHTML = ''; }
+
+/* ============================ NAV ============================ */
+const NAV_ITEMS = [
+  { id: 'dashboard', label: 'Dashboard', sub: "Today's overview" },
+  { id: 'clients', label: 'Clients', sub: 'Customer roster & vehicle info' },
+  { id: 'inventory', label: 'Inventory', sub: 'Chemicals & tools on hand' },
+  { id: 'calendar', label: 'Calendar', sub: 'Appointments & scheduling' },
+  { id: 'process', label: 'Process Guides', sub: 'Step-by-step job checklists' },
+  { id: 'invoices', label: 'Pricing & Invoices', sub: 'Service rates and billing' },
+];
+function renderNav() {
+  const nav = document.getElementById('dtl-nav');
+  nav.innerHTML = NAV_ITEMS.map(it => `
+    <button class="dtl-nav-item ${VIEW === it.id ? 'active' : ''}" data-nav="${it.id}">
+      ${ICONS[it.id]}<span>${it.label}</span>
+    </button>`).join('');
+  nav.querySelectorAll('[data-nav]').forEach(btn => {
+    btn.addEventListener('click', () => { VIEW = btn.dataset.nav; ACTIVE_GUIDE_ID = null; renderAll(); });
+  });
+  const cur = NAV_ITEMS.find(i => i.id === VIEW);
+  document.getElementById('dtl-page-title').textContent = cur.label;
+  document.getElementById('dtl-page-sub').textContent = cur.sub;
+}
+
+function renderClock() {
+  const el = document.getElementById('dtl-clock');
+  const now = new Date();
+  el.innerHTML = `<span class="d">${now.toLocaleDateString(undefined, { weekday: 'long', month: 'short', day: 'numeric' })}</span><br>${now.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' })}`;
+}
+
+/* ============================ DASHBOARD ============================ */
+function renderDashboard() {
+  document.getElementById('dtl-header-action').innerHTML = '';
+  const today = todayStr();
+  const todaysEvents = DATA.events.filter(e => e.date === today).sort((a, b) => a.time.localeCompare(b.time));
+  const upcoming7 = DATA.events.filter(e => e.date >= today && e.date <= addDays(today, 7));
+  const lowStock = DATA.inventory.filter(i => i.qty <= i.lowThreshold);
+  const unpaidInvoices = DATA.invoices.filter(i => i.status === 'unpaid');
+  const outstanding = unpaidInvoices.reduce((sum, inv) => sum + invoiceTotal(inv), 0);
+
+  const kpis = `
+    <div class="dtl-kpi-grid">
+      <div class="dtl-kpi"><div class="dtl-kpi-icon">${ICONS.jobs}</div><div class="label">Jobs Today</div><div class="value accent">${todaysEvents.length}</div><div class="sub">${upcoming7.length} scheduled next 7 days</div></div>
+      <div class="dtl-kpi"><div class="dtl-kpi-icon">${ICONS.clients}</div><div class="label">Active Clients</div><div class="value">${DATA.clients.length}</div><div class="sub">on the roster</div></div>
+      <div class="dtl-kpi"><div class="dtl-kpi-icon">${ICONS.inventory}</div><div class="label">Inventory Items</div><div class="value">${DATA.inventory.length}</div><div class="sub">${lowStock.length} running low</div></div>
+      <div class="dtl-kpi"><div class="dtl-kpi-icon">${ICONS.warn}</div><div class="label">Low Stock Alerts</div><div class="value ${lowStock.length ? 'warn' : ''}">${lowStock.length}</div><div class="sub">need reorder</div></div>
+      <div class="dtl-kpi"><div class="dtl-kpi-icon">${ICONS.dollar}</div><div class="label">Outstanding</div><div class="value ${outstanding ? 'warn' : ''}">$${outstanding.toFixed(0)}</div><div class="sub">${unpaidInvoices.length} unpaid invoice${unpaidInvoices.length === 1 ? '' : 's'}</div></div>
+    </div>`;
+
+  const agendaRows = todaysEvents.length ? todaysEvents.map(e => `
+    <div class="dtl-agenda-row">
+      <div class="dtl-time-badge">${fmtTime(e.time)}</div>
+      <div class="dtl-agenda-info"><div class="client">${escapeHTML(e.clientName || 'Unknown client')}</div><div class="service">${escapeHTML(e.service || '')}</div></div>
+      <span class="dtl-pill ${e.status}">${e.status}</span>
+    </div>`).join('') : `<div class="dtl-empty">No appointments today. Enjoy the quiet, or check the Calendar to book one.</div>`;
+
+  const lowStockRows = lowStock.length ? lowStock.map(i => `
+    <div class="dtl-lowstock-row"><div class="nm">${escapeHTML(i.name)}</div><div class="qty">${i.qty} / ${i.lowThreshold} ${escapeHTML(i.unit)}</div></div>
+  `).join('') : `<div class="dtl-empty">Everything is stocked. Nice work.</div>`;
+
+  return `
+    ${kpis}
+    <div class="dtl-two-col">
+      <div class="dtl-panel">
+        <div class="dtl-panel-title">Today's Schedule <span class="count">${todaysEvents.length} job${todaysEvents.length === 1 ? '' : 's'}</span></div>
+        <div class="dtl-row-list">${agendaRows}</div>
+      </div>
+      <div>
+        <div class="dtl-panel">
+          <div class="dtl-panel-title">Low Stock <span class="count">${lowStock.length}</span></div>
+          <div class="dtl-row-list">${lowStockRows}</div>
+        </div>
+        <div class="dtl-panel">
+          <div class="dtl-panel-title">Quick Links</div>
+          <div class="dtl-quicklinks">
+            <button class="dtl-quicklink" data-quicknav="calendar">${ICONS.calendar} Book an appointment</button>
+            <button class="dtl-quicklink" data-quicknav="clients">${ICONS.clients} Add a new client</button>
+            <button class="dtl-quicklink" data-quicknav="process">${ICONS.process} View process guides</button>
+            <button class="dtl-quicklink" data-quicknav="invoices">${ICONS.invoices} Create an invoice</button>
+          </div>
+        </div>
+      </div>
+    </div>`;
+}
+function addDays(iso, n) { const d = new Date(iso + 'T00:00:00'); d.setDate(d.getDate() + n); return d.toISOString().slice(0, 10); }
+function invoiceTotal(inv) { return (inv.items || []).reduce((sum, it) => sum + (Number(it.qty) || 0) * (Number(it.price) || 0), 0); }
+function nextInvoiceNumber() {
+  const nums = DATA.invoices.map(i => parseInt((i.number || '').replace(/\D/g, ''), 10)).filter(n => !isNaN(n));
+  const next = (nums.length ? Math.max(...nums) : 1000) + 1;
+  return 'INV-' + next;
+}
+function escapeHTML(s) { return (s ?? '').toString().replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])); }
+
+/* ============================ CLIENTS ============================ */
+function renderClients() {
+  document.getElementById('dtl-header-action').innerHTML = `<button class="dtl-btn dtl-btn-primary dtl-btn-accent-client" id="dtl-add-client">${ICONS.plus} Add Client</button>`;
+  const list = DATA.clients.filter(c => (c.name + c.vehicle + c.email).toLowerCase().includes(CLIENT_SEARCH.toLowerCase()));
+  const cards = list.length ? list.map(c => {
+    const initials = c.name.split(' ').map(s => s[0]).slice(0, 2).join('').toUpperCase();
+    return `
+    <div class="dtl-card" data-client-id="${c.id}">
+      <div class="dtl-card-top">
+        <div style="display:flex; gap:12px; align-items:center;">
+          <div class="dtl-avatar">${initials}</div>
+          <div><div class="dtl-client-name">${escapeHTML(c.name)}</div><div class="dtl-client-vehicle">${escapeHTML(c.vehicle || 'No vehicle on file')}</div></div>
+        </div>
+      </div>
+      <div class="dtl-client-meta">
+        ${c.phone ? `<div>${ICONS.phone} ${escapeHTML(c.phone)}</div>` : ''}
+        ${c.email ? `<div>${ICONS.mail} ${escapeHTML(c.email)}</div>` : ''}
+      </div>
+      <div class="dtl-last-service">Last service: ${c.lastService ? fmtDate(c.lastService) : '—'}</div>
+    </div>`;
+  }).join('') : `<div class="dtl-empty">No clients match your search.</div>`;
+
+  return `
+    <div class="dtl-toolbar">
+      <input class="dtl-search" id="dtl-client-search" placeholder="Search clients or vehicles..." value="${escapeHTML(CLIENT_SEARCH)}">
+      <div style="color:var(--text-faint); font-size:12.5px;">${DATA.clients.length} total</div>
+    </div>
+    <div class="dtl-card-grid">${cards}</div>`;
+}
+
+function clientFormHTML(c) {
+  c = c || { name: '', phone: '', email: '', vehicle: '', address: '', notes: '', lastService: '' };
+  return `
+    <div class="dtl-field"><label>Full Name</label><input id="f-name" value="${escapeHTML(c.name)}" placeholder="Jane Doe"></div>
+    <div class="dtl-field-row">
+      <div class="dtl-field"><label>Phone</label><input id="f-phone" value="${escapeHTML(c.phone)}" placeholder="(555) 000-0000"></div>
+      <div class="dtl-field"><label>Email</label><input id="f-email" value="${escapeHTML(c.email)}" placeholder="jane@email.com"></div>
+    </div>
+    <div class="dtl-field"><label>Vehicle</label><input id="f-vehicle" value="${escapeHTML(c.vehicle)}" placeholder="2022 Honda Civic"></div>
+    <div class="dtl-field"><label>Address</label><input id="f-address" value="${escapeHTML(c.address)}" placeholder="123 Main St"></div>
+    <div class="dtl-field-row">
+      <div class="dtl-field"><label>Last Service Date</label><input type="date" id="f-lastservice" value="${c.lastService || ''}"></div>
+      <div></div>
+    </div>
+    <div class="dtl-field"><label>Notes</label><textarea id="f-notes" placeholder="Preferences, quirks, reminders...">${escapeHTML(c.notes)}</textarea></div>
+  `;
+}
+
+function openClientModal(clientId) {
+  const existing = clientId ? DATA.clients.find(c => c.id === clientId) : null;
+  openModal({
+    title: existing ? 'Edit Client' : 'Add Client',
+    subtitle: existing ? (existing.vehicle || 'No vehicle on file') : 'New customer record',
+    icon: ICONS.clients,
+    variant: 'client',
+    bodyHTML: clientFormHTML(existing),
+    footHTML: `
+      ${existing ? `<button class="dtl-btn dtl-btn-danger" id="dtl-del-client">${ICONS.trash} Delete</button>` : ''}
+      <div style="flex:1"></div>
+      <button class="dtl-btn dtl-btn-ghost" id="dtl-cancel">Cancel</button>
+      <button class="dtl-btn dtl-btn-primary" id="dtl-save-client">${existing ? 'Save Changes' : 'Add Client'}</button>`,
+    onMount: () => {
+      document.getElementById('dtl-cancel').onclick = closeModal;
+      if (existing) document.getElementById('dtl-del-client').onclick = async () => {
+        DATA.clients = DATA.clients.filter(c => c.id !== existing.id);
+        await persist('clients'); closeModal(); toast('Client deleted'); renderAll();
+      };
+      document.getElementById('dtl-save-client').onclick = async () => {
+        const name = document.getElementById('f-name').value.trim();
+        if (!name) { toast('Name is required'); return; }
+        const obj = {
+          id: existing ? existing.id : uid(),
+          name,
+          phone: document.getElementById('f-phone').value.trim(),
+          email: document.getElementById('f-email').value.trim(),
+          vehicle: document.getElementById('f-vehicle').value.trim(),
+          address: document.getElementById('f-address').value.trim(),
+          lastService: document.getElementById('f-lastservice').value,
+          notes: document.getElementById('f-notes').value.trim(),
+        };
+        if (existing) { DATA.clients = DATA.clients.map(c => c.id === existing.id ? obj : c); }
+        else { DATA.clients.push(obj); }
+        await persist('clients'); closeModal(); toast(existing ? 'Client updated' : 'Client added'); renderAll();
+      };
+    },
+  });
+}
+
+/* ============================ INVENTORY ============================ */
+function renderInventory() {
+  document.getElementById('dtl-header-action').innerHTML = `<button class="dtl-btn dtl-btn-primary dtl-btn-accent-inventory" id="dtl-add-item">${ICONS.plus} Add Item</button>`;
+  let items = DATA.inventory;
+  if (INV_FILTER !== 'all') items = items.filter(i => i.category === INV_FILTER);
+  const cards = items.length ? items.map(i => {
+    const pct = Math.max(0, Math.min(100, (i.qty / Math.max(i.lowThreshold * 2, 1)) * 100));
+    const low = i.qty <= i.lowThreshold;
+    return `
+    <div class="dtl-card dtl-inv-card" data-item-id="${i.id}">
+      <div class="dtl-inv-top">
+        <div><div class="dtl-inv-name">${escapeHTML(i.name)}</div><div class="dtl-inv-cat">${escapeHTML(i.notes || '')}</div></div>
+        <span class="dtl-tag ${i.category}">${i.category}</span>
+      </div>
+      <div class="dtl-stock-bar-track"><div class="dtl-stock-bar-fill ${low ? 'low' : ''}" style="width:${pct}%"></div></div>
+      <div class="dtl-stock-nums"><span>${i.qty} ${escapeHTML(i.unit)} on hand</span><span>min ${i.lowThreshold}</span></div>
+      <div class="dtl-inv-actions">
+        <button class="dtl-btn dtl-btn-sm" data-restock="${i.id}">+1 ${escapeHTML(i.unit)}</button>
+        <button class="dtl-btn dtl-btn-sm dtl-btn-ghost" data-use="${i.id}">-1 ${escapeHTML(i.unit)}</button>
+      </div>
+    </div>`;
+  }).join('') : `<div class="dtl-empty">No items in this category yet.</div>`;
+
+  return `
+    <div class="dtl-toolbar">
+      <div class="dtl-tabs">
+        <div class="dtl-tab ${INV_FILTER === 'all' ? 'active' : ''}" data-filter="all">All</div>
+        <div class="dtl-tab ${INV_FILTER === 'chemical' ? 'active' : ''}" data-filter="chemical">Chemicals</div>
+        <div class="dtl-tab ${INV_FILTER === 'tool' ? 'active' : ''}" data-filter="tool">Tools</div>
+      </div>
+      <div style="color:var(--text-faint); font-size:12.5px;">${DATA.inventory.filter(i => i.qty <= i.lowThreshold).length} low stock</div>
+    </div>
+    <div class="dtl-card-grid">${cards}</div>`;
+}
+
+function itemFormHTML(i) {
+  i = i || { name: '', category: 'chemical', qty: 0, unit: '', lowThreshold: 1, notes: '' };
+  return `
+    <div class="dtl-field"><label>Item Name</label><input id="f-iname" value="${escapeHTML(i.name)}" placeholder="Ceramic Coating Kit"></div>
+    <div class="dtl-field-row">
+      <div class="dtl-field"><label>Category</label>
+        <select id="f-icat"><option value="chemical" ${i.category === 'chemical' ? 'selected' : ''}>Chemical</option><option value="tool" ${i.category === 'tool' ? 'selected' : ''}>Tool</option></select>
+      </div>
+      <div class="dtl-field"><label>Unit</label><input id="f-iunit" value="${escapeHTML(i.unit)}" placeholder="gal, pcs, bottles..."></div>
+    </div>
+    <div class="dtl-field-row">
+      <div class="dtl-field"><label>Quantity on Hand</label><input type="number" id="f-iqty" value="${i.qty}" min="0"></div>
+      <div class="dtl-field"><label>Low Stock Threshold</label><input type="number" id="f-ithresh" value="${i.lowThreshold}" min="0"></div>
+    </div>
+    <div class="dtl-field"><label>Notes</label><textarea id="f-inotes" placeholder="Supplier, reorder link...">${escapeHTML(i.notes)}</textarea></div>
+  `;
+}
+function openItemModal(itemId) {
+  const existing = itemId ? DATA.inventory.find(i => i.id === itemId) : null;
+  openModal({
+    title: existing ? 'Edit Item' : 'Add Inventory Item',
+    subtitle: existing ? `${existing.qty} ${existing.unit} on hand` : 'New chemical or tool',
+    icon: ICONS.inventory,
+    variant: 'inventory',
+    bodyHTML: itemFormHTML(existing),
+    footHTML: `
+      ${existing ? `<button class="dtl-btn dtl-btn-danger" id="dtl-del-item">${ICONS.trash} Delete</button>` : ''}
+      <div style="flex:1"></div>
+      <button class="dtl-btn dtl-btn-ghost" id="dtl-cancel">Cancel</button>
+      <button class="dtl-btn dtl-btn-primary" id="dtl-save-item">${existing ? 'Save Changes' : 'Add Item'}</button>`,
+    onMount: () => {
+      document.getElementById('dtl-cancel').onclick = closeModal;
+      if (existing) document.getElementById('dtl-del-item').onclick = async () => {
+        DATA.inventory = DATA.inventory.filter(i => i.id !== existing.id);
+        await persist('inventory'); closeModal(); toast('Item deleted'); renderAll();
+      };
+      document.getElementById('dtl-save-item').onclick = async () => {
+        const name = document.getElementById('f-iname').value.trim();
+        if (!name) { toast('Item name is required'); return; }
+        const obj = {
+          id: existing ? existing.id : uid(),
+          name,
+          category: document.getElementById('f-icat').value,
+          unit: document.getElementById('f-iunit').value.trim() || 'units',
+          qty: Math.max(0, parseInt(document.getElementById('f-iqty').value, 10) || 0),
+          lowThreshold: Math.max(0, parseInt(document.getElementById('f-ithresh').value, 10) || 0),
+          notes: document.getElementById('f-inotes').value.trim(),
+        };
+        if (existing) { DATA.inventory = DATA.inventory.map(i => i.id === existing.id ? obj : i); }
+        else { DATA.inventory.push(obj); }
+        await persist('inventory'); closeModal(); toast(existing ? 'Item updated' : 'Item added'); renderAll();
+      };
+    },
+  });
+}
+
+/* ============================ CALENDAR ============================ */
+function renderCalendar() {
+  document.getElementById('dtl-header-action').innerHTML = `<button class="dtl-btn dtl-btn-primary dtl-btn-accent-calendar" id="dtl-add-event">${ICONS.plus} New Appointment</button>`;
+  const year = CAL_DATE.getFullYear(), month = CAL_DATE.getMonth();
+  const first = new Date(year, month, 1);
+  const startOffset = first.getDay();
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  const daysInPrevMonth = new Date(year, month, 0).getDate();
+  const cells = [];
+  for (let i = startOffset - 1; i >= 0; i--) cells.push({ day: daysInPrevMonth - i, outside: true, iso: null });
+  for (let d = 1; d <= daysInMonth; d++) {
+    const iso = `${year}-${String(month + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+    cells.push({ day: d, outside: false, iso });
+  }
+  while (cells.length % 7 !== 0) cells.push({ day: cells.length, outside: true, iso: null });
+  const todayIso = todayStr();
+  const dow = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+
+  const cellHTML = cells.map(c => {
+    if (c.outside) return `<div class="dtl-cal-cell outside"><div class="dtl-cal-daynum">${c.day}</div></div>`;
+    const dayEvents = DATA.events.filter(e => e.date === c.iso).sort((a, b) => a.time.localeCompare(b.time));
+    const chips = dayEvents.slice(0, 2).map(e => `<div class="dtl-cal-chip">${fmtTime(e.time)} · ${escapeHTML(e.clientName)}</div>`).join('');
+    const more = dayEvents.length > 2 ? `<div class="dtl-cal-more">+${dayEvents.length - 2} more</div>` : '';
+    return `<div class="dtl-cal-cell ${c.iso === todayIso ? 'today' : ''}" data-cal-day="${c.iso}">
+      <div class="dtl-cal-daynum">${c.day}</div>${chips}${more}
+    </div>`;
+  }).join('');
+
+  return `
+    <div class="dtl-cal-header">
+      <div class="dtl-cal-month">${first.toLocaleDateString(undefined, { month: 'long', year: 'numeric' })}</div>
+      <div class="dtl-cal-nav">
+        <button class="dtl-icon-btn" id="dtl-cal-prev">${ICONS.chevL}</button>
+        <button class="dtl-btn dtl-btn-sm" id="dtl-cal-today">Today</button>
+        <button class="dtl-icon-btn" id="dtl-cal-next">${ICONS.chevR}</button>
+      </div>
+    </div>
+    <div class="dtl-cal-grid">
+      ${dow.map(d => `<div class="dtl-cal-dow">${d}</div>`).join('')}
+      ${cellHTML}
+    </div>`;
+}
+
+function eventFormHTML(ev, presetDate) {
+  ev = ev || { date: presetDate || todayStr(), time: '09:00', clientId: '', service: '', status: 'scheduled', notes: '' };
+  const clientOptions = DATA.clients.map(c => `<option value="${c.id}" ${ev.clientId === c.id ? 'selected' : ''}>${escapeHTML(c.name)}</option>`).join('');
+  const guideOptions = DATA.guides.map(g => `<option value="${escapeHTML(g.name)}" ${ev.service === g.name ? 'selected' : ''}>${escapeHTML(g.name)}</option>`).join('');
+  return `
+    <div class="dtl-field-row">
+      <div class="dtl-field"><label>Date</label><input type="date" id="f-edate" value="${ev.date}"></div>
+      <div class="dtl-field"><label>Time</label><input type="time" id="f-etime" value="${ev.time}"></div>
+    </div>
+    <div class="dtl-field"><label>Client</label><select id="f-eclient"><option value="">— Select client —</option>${clientOptions}</select></div>
+    <div class="dtl-field"><label>Service / Job Type</label><select id="f-eservice"><option value="">— Select service —</option>${guideOptions}<option value="__custom__">Custom / Other...</option></select></div>
+    <div class="dtl-field" id="f-ecustom-wrap" style="display:none"><label>Custom Service Name</label><input id="f-ecustom"></div>
+    <div class="dtl-field"><label>Status</label>
+      <select id="f-estatus"><option value="scheduled" ${ev.status === 'scheduled' ? 'selected' : ''}>Scheduled</option><option value="done" ${ev.status === 'done' ? 'selected' : ''}>Done</option><option value="canceled" ${ev.status === 'canceled' ? 'selected' : ''}>Canceled</option></select>
+    </div>
+    <div class="dtl-field"><label>Notes</label><textarea id="f-enotes">${escapeHTML(ev.notes)}</textarea></div>
+  `;
+}
+function openEventModal(eventId, presetDate) {
+  const existing = eventId ? DATA.events.find(e => e.id === eventId) : null;
+  openModal({
+    title: existing ? 'Edit Appointment' : 'New Appointment',
+    subtitle: existing ? fmtDate(existing.date) : (presetDate ? fmtDate(presetDate) : 'Book a job'),
+    icon: ICONS.calendar,
+    variant: 'calendar',
+    bodyHTML: eventFormHTML(existing, presetDate),
+    footHTML: `
+      ${existing ? `<button class="dtl-btn dtl-btn-danger" id="dtl-del-event">${ICONS.trash} Delete</button>` : ''}
+      <div style="flex:1"></div>
+      <button class="dtl-btn dtl-btn-ghost" id="dtl-cancel">Cancel</button>
+      <button class="dtl-btn dtl-btn-primary" id="dtl-save-event">${existing ? 'Save Changes' : 'Book Appointment'}</button>`,
+    onMount: () => {
+      const svcSel = document.getElementById('f-eservice');
+      const customWrap = document.getElementById('f-ecustom-wrap');
+      const syncCustom = () => { customWrap.style.display = svcSel.value === '__custom__' ? 'block' : 'none'; };
+      svcSel.onchange = syncCustom; syncCustom();
+      if (existing && !DATA.guides.some(g => g.name === existing.service) && existing.service) {
+        svcSel.value = '__custom__'; document.getElementById('f-ecustom').value = existing.service; syncCustom();
+      }
+      document.getElementById('dtl-cancel').onclick = closeModal;
+      if (existing) document.getElementById('dtl-del-event').onclick = async () => {
+        DATA.events = DATA.events.filter(e => e.id !== existing.id);
+        await persist('events'); closeModal(); toast('Appointment removed'); renderAll();
+      };
+      document.getElementById('dtl-save-event').onclick = async () => {
+        const clientId = document.getElementById('f-eclient').value;
+        const client = DATA.clients.find(c => c.id === clientId);
+        let service = svcSel.value;
+        if (service === '__custom__') service = document.getElementById('f-ecustom').value.trim();
+        const obj = {
+          id: existing ? existing.id : uid(),
+          date: document.getElementById('f-edate').value || todayStr(),
+          time: document.getElementById('f-etime').value || '09:00',
+          clientId, clientName: client ? client.name : (existing ? existing.clientName : 'Walk-in'),
+          service, status: document.getElementById('f-estatus').value,
+          notes: document.getElementById('f-enotes').value.trim(),
+        };
+        if (existing) { DATA.events = DATA.events.map(e => e.id === existing.id ? obj : e); }
+        else { DATA.events.push(obj); }
+        await persist('events'); closeModal(); toast(existing ? 'Appointment updated' : 'Appointment booked'); renderAll();
+      };
+    },
+  });
+}
+function openDayModal(iso) {
+  const dayEvents = DATA.events.filter(e => e.date === iso).sort((a, b) => a.time.localeCompare(b.time));
+  const rows = dayEvents.length ? dayEvents.map(e => `
+    <div class="dtl-agenda-row" data-event-id="${e.id}" style="cursor:pointer">
+      <div class="dtl-time-badge">${fmtTime(e.time)}</div>
+      <div class="dtl-agenda-info"><div class="client">${escapeHTML(e.clientName)}</div><div class="service">${escapeHTML(e.service)}</div></div>
+      <span class="dtl-pill ${e.status}">${e.status}</span>
+    </div>`).join('') : `<div class="dtl-empty">Nothing booked on this day yet.</div>`;
+  openModal({
+    title: fmtDate(iso),
+    subtitle: `${dayEvents.length} appointment${dayEvents.length === 1 ? '' : 's'} booked`,
+    icon: ICONS.calendar,
+    variant: 'calendar',
+    bodyHTML: `<div class="dtl-row-list">${rows}</div>`,
+    footHTML: `<div style="flex:1"></div><button class="dtl-btn dtl-btn-ghost" id="dtl-cancel">Close</button><button class="dtl-btn dtl-btn-primary" id="dtl-add-day-event">${ICONS.plus} Add Appointment</button>`,
+    onMount: () => {
+      document.getElementById('dtl-cancel').onclick = closeModal;
+      document.getElementById('dtl-add-day-event').onclick = () => openEventModal(null, iso);
+      document.querySelectorAll('[data-event-id]').forEach(row => {
+        row.addEventListener('click', () => openEventModal(row.dataset.eventId));
+      });
+    },
+  });
+}
+
+/* ============================ PROCESS GUIDES ============================ */
+function renderProcess() {
+  if (ACTIVE_GUIDE_ID) return renderGuideDetail(ACTIVE_GUIDE_ID);
+  document.getElementById('dtl-header-action').innerHTML = `<button class="dtl-btn dtl-btn-primary dtl-btn-accent-process" id="dtl-add-guide">${ICONS.plus} New Guide</button>`;
+  const cards = DATA.guides.map(g => `
+    <div class="dtl-guide-card" data-guide-id="${g.id}">
+      <div class="dtl-guide-cat">${escapeHTML(g.category)}</div>
+      <div class="dtl-guide-name">${escapeHTML(g.name)}</div>
+      <div class="dtl-guide-meta">
+        <span>${ICONS.clock} ${escapeHTML(g.estTime)}</span>
+        <span>${ICONS.process} ${g.steps.length} steps</span>
+      </div>
+    </div>`).join('');
+  return `<div class="dtl-guide-grid">${cards || '<div class="dtl-empty">No process guides yet.</div>'}</div>`;
+}
+
+function guideDialSVG(pct) {
+  const r = 30, c = 2 * Math.PI * r;
+  const offset = c - (pct / 100) * c;
+  return `<svg width="76" height="76" viewBox="0 0 76 76">
+    <circle cx="38" cy="38" r="${r}" fill="none" stroke="var(--surface-2)" stroke-width="7"/>
+    <circle cx="38" cy="38" r="${r}" fill="none" stroke="${pct >= 100 ? 'var(--success)' : 'var(--accent)'}" stroke-width="7" stroke-linecap="round"
+      stroke-dasharray="${c}" stroke-dashoffset="${offset}" transform="rotate(-90 38 38)"/>
+  </svg>`;
+}
+
+function renderGuideDetail(guideId) {
+  const g = DATA.guides.find(x => x.id === guideId);
+  if (!g) { ACTIVE_GUIDE_ID = null; return renderProcess(); }
+  document.getElementById('dtl-header-action').innerHTML = `
+    <button class="dtl-btn" id="dtl-guide-back">${ICONS.chevL} All Guides</button>
+    <button class="dtl-btn dtl-btn-danger" id="dtl-del-guide" style="margin-left:8px">${ICONS.trash} Delete</button>`;
+  const checked = GUIDE_PROGRESS[g.id] || new Set();
+  const pct = g.steps.length ? Math.round((checked.size / g.steps.length) * 100) : 0;
+
+  const stepsHTML = g.steps.map((s, idx) => `
+    <div class="dtl-step ${checked.has(idx) ? 'checked' : ''}" data-step-idx="${idx}">
+      <div class="dtl-step-num">${checked.has(idx) ? '&#10003;' : idx + 1}</div>
+      <div class="step-text">${escapeHTML(s)}</div>
+    </div>`).join('');
+
+  const productsHTML = g.products.map(p => `<div class="dtl-need-item">${escapeHTML(p)}</div>`).join('') || `<div class="dtl-empty" style="text-align:left; padding:4px 0;">None listed</div>`;
+  const toolsHTML = g.tools.map(t => `<div class="dtl-need-item">${escapeHTML(t)}</div>`).join('') || `<div class="dtl-empty" style="text-align:left; padding:4px 0;">None listed</div>`;
+
+  return `
+    <div class="dtl-two-col">
+      <div class="dtl-panel">
+        <div class="dtl-panel-title">${escapeHTML(g.name)} <span class="count">${escapeHTML(g.category)} &middot; ${escapeHTML(g.estTime)}</span></div>
+        <div class="dtl-step-list">${stepsHTML}</div>
+        <div class="dtl-need-cols">
+          <div><div class="dtl-need-title">Products Needed</div><div class="dtl-need-list">${productsHTML}</div></div>
+          <div><div class="dtl-need-title">Tools Needed</div><div class="dtl-need-list">${toolsHTML}</div></div>
+        </div>
+      </div>
+      <div class="dtl-panel">
+        <div class="dtl-panel-title">Job Progress</div>
+        <div class="dtl-dial-wrap">
+          ${guideDialSVG(pct)}
+          <div><div class="dtl-dial-label">${pct}%</div><div class="dtl-dial-sub">${checked.size} of ${g.steps.length} steps done</div></div>
+        </div>
+        <button class="dtl-btn dtl-btn-sm" style="margin-top:14px; width:100%; justify-content:center" id="dtl-reset-progress">Reset Checklist</button>
+      </div>
+    </div>`;
+}
+
+function guideFormHTML() {
+  return `
+    <div class="dtl-field"><label>Guide Name</label><input id="f-gname" placeholder="Headlight Restoration"></div>
+    <div class="dtl-field-row">
+      <div class="dtl-field"><label>Category</label><input id="f-gcat" placeholder="Exterior"></div>
+      <div class="dtl-field"><label>Estimated Time</label><input id="f-gtime" placeholder="45 min"></div>
+    </div>
+    <div class="dtl-field"><label>Steps (in order)</label><div id="f-gsteps"></div><button type="button" class="dtl-add-line" data-add="step">+ Add step</button></div>
+    <div class="dtl-field"><label>Products Needed</label><div id="f-gproducts"></div><button type="button" class="dtl-add-line" data-add="product">+ Add product</button></div>
+    <div class="dtl-field"><label>Tools Needed</label><div id="f-gtools"></div><button type="button" class="dtl-add-line" data-add="tool">+ Add tool</button></div>
+  `;
+}
+function addDynRow(containerId, placeholder) {
+  const container = document.getElementById(containerId);
+  const row = document.createElement('div');
+  row.className = 'dtl-dyn-row';
+  row.innerHTML = `<input placeholder="${placeholder}"><button type="button" class="dtl-icon-btn" data-remove-row>&times;</button>`;
+  row.querySelector('[data-remove-row]').onclick = () => row.remove();
+  container.appendChild(row);
+  row.querySelector('input').focus();
+}
+function openGuideModal() {
+  openModal({
+    title: 'New Process Guide',
+    subtitle: 'Build a reusable job checklist',
+    icon: ICONS.process,
+    variant: 'process',
+    bodyHTML: guideFormHTML(),
+    footHTML: `<div style="flex:1"></div><button class="dtl-btn dtl-btn-ghost" id="dtl-cancel">Cancel</button><button class="dtl-btn dtl-btn-primary" id="dtl-save-guide">Save Guide</button>`,
+    onMount: () => {
+      addDynRow('f-gsteps', 'e.g. Rinse vehicle to remove loose dirt');
+      addDynRow('f-gproducts', 'e.g. Snow foam');
+      addDynRow('f-gtools', 'e.g. Foam cannon');
+      document.querySelectorAll('[data-add]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const map = { step: ['f-gsteps', 'e.g. Wipe down and inspect'], product: ['f-gproducts', 'e.g. Glass cleaner'], tool: ['f-gtools', 'e.g. Microfiber towel'] };
+          const [cid, ph] = map[btn.dataset.add];
+          addDynRow(cid, ph);
+        });
+      });
+      document.getElementById('dtl-cancel').onclick = closeModal;
+      document.getElementById('dtl-save-guide').onclick = async () => {
+        const name = document.getElementById('f-gname').value.trim();
+        if (!name) { toast('Guide name is required'); return; }
+        const collect = (id) => Array.from(document.querySelectorAll(`#${id} input`)).map(i => i.value.trim()).filter(Boolean);
+        const obj = {
+          id: uid(), name,
+          category: document.getElementById('f-gcat').value.trim() || 'General',
+          estTime: document.getElementById('f-gtime').value.trim() || '—',
+          steps: collect('f-gsteps'),
+          products: collect('f-gproducts'),
+          tools: collect('f-gtools'),
+        };
+        if (obj.steps.length === 0) { toast('Add at least one step'); return; }
+        DATA.guides.push(obj);
+        await persist('guides'); closeModal(); toast('Guide created'); renderAll();
+      };
+    },
+  });
+}
+
+/* ============================ PRICING & INVOICES ============================ */
+function renderInvoicesView() {
+  document.getElementById('dtl-header-action').innerHTML = INVOICE_TAB === 'invoices'
+    ? `<button class="dtl-btn dtl-btn-primary dtl-btn-accent-invoice" id="dtl-add-invoice">${ICONS.plus} New Invoice</button>`
+    : `<button class="dtl-btn dtl-btn-primary dtl-btn-accent-pricing" id="dtl-add-price">${ICONS.plus} Add Service</button>`;
+
+  const tabs = `
+    <div class="dtl-toolbar">
+      <div class="dtl-tabs">
+        <div class="dtl-tab ${INVOICE_TAB === 'invoices' ? 'active' : ''}" data-invtab="invoices">Invoices</div>
+        <div class="dtl-tab ${INVOICE_TAB === 'pricing' ? 'active' : ''}" data-invtab="pricing">Price List</div>
+      </div>
+      <div style="color:var(--text-faint); font-size:12.5px;">
+        ${INVOICE_TAB === 'invoices' ? `${DATA.invoices.length} invoice${DATA.invoices.length === 1 ? '' : 's'}` : `${DATA.pricing.length} service${DATA.pricing.length === 1 ? '' : 's'}`}
+      </div>
+    </div>`;
+
+  return tabs + (INVOICE_TAB === 'invoices' ? renderInvoiceList() : renderPricingList());
+}
+
+function renderInvoiceList() {
+  const sorted = [...DATA.invoices].sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+  if (!sorted.length) return `<div class="dtl-empty">No invoices yet. Create one to bill a client for a job.</div>`;
+  const rows = sorted.map(inv => `
+    <div class="dtl-invoice-row" data-invoice-id="${inv.id}">
+      <div class="dtl-invoice-num">${escapeHTML(inv.number)}</div>
+      <div class="dtl-invoice-info"><div class="client">${escapeHTML(inv.clientName)}</div><div class="meta">${fmtDate(inv.date)} &middot; ${(inv.items || []).length} item${(inv.items || []).length === 1 ? '' : 's'}</div></div>
+      <div class="dtl-invoice-total">$${invoiceTotal(inv).toFixed(2)}</div>
+      <span class="dtl-pill ${inv.status}">${inv.status}</span>
+    </div>`).join('');
+  return `<div class="dtl-row-list">${rows}</div>`;
+}
+
+function renderPricingList() {
+  const services = DATA.pricing.filter(p => (p.category || 'service') !== 'addon');
+  const addons = DATA.pricing.filter(p => p.category === 'addon');
+  const rowHTML = (p) => `
+    <div class="dtl-price-row ${p.category === 'addon' ? 'addon' : ''}" data-price-id="${p.id}">
+      <div class="dtl-price-info"><div class="svc">${escapeHTML(p.service)}</div>${p.notes ? `<div class="note">${escapeHTML(p.notes)}</div>` : ''}</div>
+      <div class="dtl-price-amt">${p.category === 'addon' ? '+' : ''}$${Number(p.price).toFixed(2)}</div>
+    </div>`;
+  const serviceRows = services.length ? services.map(rowHTML).join('') : `<div class="dtl-empty">No full services yet.</div>`;
+  const addonRows = addons.length ? addons.map(rowHTML).join('') : `<div class="dtl-empty">No add-ons yet. Add extras like pet hair removal or headlight restoration.</div>`;
+  return `
+    <div class="dtl-panel">
+      <div class="dtl-panel-title">Full Services <span class="count">${services.length}</span></div>
+      <div class="dtl-row-list">${serviceRows}</div>
+    </div>
+    <div class="dtl-panel">
+      <div class="dtl-panel-title">Add-Ons <span class="count">${addons.length}</span></div>
+      <div class="dtl-row-list">${addonRows}</div>
+    </div>`;
+}
+
+/* ---- price (service) modal ---- */
+function priceFormHTML(p) {
+  p = p || { service: '', price: '', notes: '', category: 'service' };
+  return `
+    <div class="dtl-field"><label>Type</label>
+      <select id="f-pcat">
+        <option value="service" ${(p.category || 'service') === 'service' ? 'selected' : ''}>Full Service</option>
+        <option value="addon" ${p.category === 'addon' ? 'selected' : ''}>Add-On</option>
+      </select>
+    </div>
+    <div class="dtl-field"><label>Service Name</label><input id="f-psvc" value="${escapeHTML(p.service)}" placeholder="Headlight Restoration"></div>
+    <div class="dtl-field"><label>Price ($)</label><input type="number" id="f-pprice" value="${p.price}" min="0" step="0.01"></div>
+    <div class="dtl-field"><label>Notes</label><input id="f-pnotes" value="${escapeHTML(p.notes)}" placeholder="Optional detail, e.g. per vehicle size"></div>
+  `;
+}
+function openPriceModal(priceId) {
+  const existing = priceId ? DATA.pricing.find(p => p.id === priceId) : null;
+  openModal({
+    title: existing ? 'Edit Service' : 'Add Service',
+    subtitle: existing ? `$${Number(existing.price).toFixed(2)}` : 'Add to your price list',
+    icon: ICONS.dollar,
+    variant: 'pricing',
+    bodyHTML: priceFormHTML(existing),
+    footHTML: `
+      ${existing ? `<button class="dtl-btn dtl-btn-danger" id="dtl-del-price">${ICONS.trash} Delete</button>` : ''}
+      <div style="flex:1"></div>
+      <button class="dtl-btn dtl-btn-ghost" id="dtl-cancel">Cancel</button>
+      <button class="dtl-btn dtl-btn-primary" id="dtl-save-price">${existing ? 'Save Changes' : 'Add Service'}</button>`,
+    onMount: () => {
+      document.getElementById('dtl-cancel').onclick = closeModal;
+      if (existing) document.getElementById('dtl-del-price').onclick = async () => {
+        DATA.pricing = DATA.pricing.filter(p => p.id !== existing.id);
+        await persist('pricing'); closeModal(); toast('Service removed'); renderAll();
+      };
+      document.getElementById('dtl-save-price').onclick = async () => {
+        const service = document.getElementById('f-psvc').value.trim();
+        if (!service) { toast('Service name is required'); return; }
+        const obj = {
+          id: existing ? existing.id : uid(),
+          service,
+          price: Math.max(0, parseFloat(document.getElementById('f-pprice').value) || 0),
+          notes: document.getElementById('f-pnotes').value.trim(),
+          category: document.getElementById('f-pcat').value,
+        };
+        if (existing) { DATA.pricing = DATA.pricing.map(p => p.id === existing.id ? obj : p); }
+        else { DATA.pricing.push(obj); }
+        await persist('pricing'); closeModal(); toast(existing ? 'Service updated' : 'Service added'); renderAll();
+      };
+    },
+  });
+}
+
+/* ---- invoice modal ---- */
+function lineItemRowHTML(item) {
+  item = item || { desc: '', qty: 1, price: '' };
+  const opt = (p) => `<option value="${escapeHTML(p.service)}" data-price="${p.price}" ${item.desc === p.service ? 'selected' : ''}>${escapeHTML(p.service)}</option>`;
+  const services = DATA.pricing.filter(p => (p.category || 'service') !== 'addon').map(opt).join('');
+  const addons = DATA.pricing.filter(p => p.category === 'addon').map(opt).join('');
+  const isCustom = item.desc && !DATA.pricing.some(p => p.service === item.desc);
+  return `
+    <div class="dtl-lineitem-row">
+      <select class="li-desc">
+        <option value="">— Select service —</option>
+        ${services ? `<optgroup label="Full Services">${services}</optgroup>` : ''}
+        ${addons ? `<optgroup label="Add-Ons">${addons}</optgroup>` : ''}
+        <option value="__custom__" ${isCustom ? 'selected' : ''}>Custom line item...</option>
+      </select>
+      <input class="li-qty" type="number" min="1" value="${item.qty}" title="Qty">
+      <input class="li-price" type="number" min="0" step="0.01" value="${item.price}" title="Unit price">
+      <button type="button" class="dtl-icon-btn" data-remove-line>&times;</button>
+    </div>
+    ${isCustom ? `<div style="margin:-4px 0 8px 0;"><input class="li-custom" placeholder="Custom description" value="${escapeHTML(item.desc)}"></div>` : ''}
+  `;
+}
+function wireLineItemRow(row) {
+  const sel = row.querySelector('.li-desc');
+  const priceInput = row.querySelector('.li-price');
+  const removeCustomBlock = () => { const nxt = row.nextElementSibling; if (nxt && nxt.querySelector && nxt.querySelector('.li-custom')) nxt.remove(); };
+  sel.addEventListener('change', () => {
+    removeCustomBlock();
+    if (sel.value === '__custom__') {
+      const div = document.createElement('div');
+      div.style.margin = '-4px 0 8px 0';
+      div.innerHTML = `<input class="li-custom" placeholder="Custom description">`;
+      row.after(div);
+      div.querySelector('.li-custom').focus();
+    } else {
+      const opt = sel.selectedOptions[0];
+      const p = opt ? opt.dataset.price : null;
+      if (p) priceInput.value = p;
+      recalcInvoiceTotal();
+    }
+  });
+  row.querySelector('[data-remove-line]').addEventListener('click', () => { removeCustomBlock(); row.remove(); recalcInvoiceTotal(); });
+  row.querySelector('.li-qty').addEventListener('input', recalcInvoiceTotal);
+  row.querySelector('.li-price').addEventListener('input', recalcInvoiceTotal);
+}
+function recalcInvoiceTotal() {
+  const totalEl = document.getElementById('f-inv-total');
+  if (!totalEl) return;
+  let sum = 0;
+  document.querySelectorAll('#f-lineitems .dtl-lineitem-row').forEach(row => {
+    const qty = parseFloat(row.querySelector('.li-qty').value) || 0;
+    const price = parseFloat(row.querySelector('.li-price').value) || 0;
+    sum += qty * price;
+  });
+  totalEl.textContent = '$' + sum.toFixed(2);
+}
+function invoiceFormHTML(inv) {
+  inv = inv || { clientId: '', date: todayStr(), status: 'unpaid', items: [{ desc: '', qty: 1, price: '' }], notes: '' };
+  const clientOptions = DATA.clients.map(c => `<option value="${c.id}" ${inv.clientId === c.id ? 'selected' : ''}>${escapeHTML(c.name)}</option>`).join('');
+  return `
+    <div class="dtl-field-row">
+      <div class="dtl-field"><label>Client</label><select id="f-iv-client"><option value="">— Select client —</option>${clientOptions}</select></div>
+      <div class="dtl-field"><label>Date</label><input type="date" id="f-iv-date" value="${inv.date}"></div>
+    </div>
+    <div class="dtl-field"><label>Line Items</label>
+      <div id="f-lineitems"></div>
+      <button type="button" class="dtl-add-line" id="f-add-lineitem">+ Add line item</button>
+    </div>
+    <div class="dtl-invoice-total-line"><span class="lbl">Total</span><span class="amt" id="f-inv-total">$0.00</span></div>
+    <div class="dtl-field"><label>Status</label><select id="f-iv-status"><option value="unpaid" ${inv.status === 'unpaid' ? 'selected' : ''}>Unpaid</option><option value="paid" ${inv.status === 'paid' ? 'selected' : ''}>Paid</option></select></div>
+    <div class="dtl-field"><label>Notes</label><textarea id="f-iv-notes">${escapeHTML(inv.notes)}</textarea></div>
+  `;
+}
+function openInvoiceModal(invoiceId) {
+  const existing = invoiceId ? DATA.invoices.find(i => i.id === invoiceId) : null;
+  const items = existing ? existing.items : [{ desc: '', qty: 1, price: '' }];
+  openModal({
+    title: existing ? `Edit ${existing.number}` : 'New Invoice',
+    subtitle: existing ? escapeHTML(existing.clientName) : 'Bill a client for completed work',
+    icon: ICONS.invoices,
+    variant: 'invoice',
+    bodyHTML: invoiceFormHTML(existing),
+    footHTML: `
+      ${existing ? `<button class="dtl-btn dtl-btn-danger" id="dtl-del-invoice">${ICONS.trash} Delete</button>` : ''}
+      <div style="flex:1"></div>
+      <button class="dtl-btn dtl-btn-ghost" id="dtl-cancel">Cancel</button>
+      <button class="dtl-btn dtl-btn-primary" id="dtl-save-invoice">${existing ? 'Save Changes' : 'Create Invoice'}</button>`,
+    onMount: () => {
+      const container = document.getElementById('f-lineitems');
+      items.forEach(it => {
+        const wrap = document.createElement('div');
+        wrap.innerHTML = lineItemRowHTML(it);
+        while (wrap.firstElementChild) container.appendChild(wrap.firstElementChild);
+      });
+      container.querySelectorAll('.dtl-lineitem-row').forEach(wireLineItemRow);
+      recalcInvoiceTotal();
+      document.getElementById('f-add-lineitem').addEventListener('click', () => {
+        const wrap = document.createElement('div');
+        wrap.innerHTML = lineItemRowHTML();
+        const row = wrap.firstElementChild;
+        container.appendChild(row);
+        wireLineItemRow(row);
+        recalcInvoiceTotal();
+      });
+      document.getElementById('dtl-cancel').onclick = closeModal;
+      if (existing) document.getElementById('dtl-del-invoice').onclick = async () => {
+        DATA.invoices = DATA.invoices.filter(i => i.id !== existing.id);
+        await persist('invoices'); closeModal(); toast('Invoice deleted'); renderAll();
+      };
+      document.getElementById('dtl-save-invoice').onclick = async () => {
+        const clientId = document.getElementById('f-iv-client').value;
+        const client = DATA.clients.find(c => c.id === clientId);
+        if (!client) { toast('Select a client'); return; }
+        const lineItems = [];
+        document.querySelectorAll('#f-lineitems .dtl-lineitem-row').forEach(row => {
+          const sel = row.querySelector('.li-desc');
+          let desc = sel.value;
+          if (desc === '__custom__') {
+            const customInput = row.nextElementSibling ? row.nextElementSibling.querySelector('.li-custom') : null;
+            desc = customInput ? customInput.value.trim() : '';
+          }
+          const qty = parseFloat(row.querySelector('.li-qty').value) || 0;
+          const price = parseFloat(row.querySelector('.li-price').value) || 0;
+          if (desc && qty > 0) lineItems.push({ id: uid(), desc, qty, price });
+        });
+        if (!lineItems.length) { toast('Add at least one line item'); return; }
+        const obj = {
+          id: existing ? existing.id : uid(),
+          number: existing ? existing.number : nextInvoiceNumber(),
+          clientId, clientName: client.name,
+          date: document.getElementById('f-iv-date').value || todayStr(),
+          status: document.getElementById('f-iv-status').value,
+          items: lineItems,
+          notes: document.getElementById('f-iv-notes').value.trim(),
+        };
+        if (existing) { DATA.invoices = DATA.invoices.map(i => i.id === existing.id ? obj : i); }
+        else { DATA.invoices.push(obj); }
+        await persist('invoices'); closeModal(); toast(existing ? 'Invoice updated' : 'Invoice created'); renderAll();
+      };
+    },
+  });
+}
+
+/* ============================ ROUTER / RENDER ============================ */
+function renderAll() {
+  renderNav();
+  renderClock();
+  const viewRoot = document.getElementById('dtl-view');
+  let html = '';
+  if (VIEW === 'dashboard') html = renderDashboard();
+  else if (VIEW === 'clients') html = renderClients();
+  else if (VIEW === 'inventory') html = renderInventory();
+  else if (VIEW === 'calendar') html = renderCalendar();
+  else if (VIEW === 'process') html = renderProcess();
+  else if (VIEW === 'invoices') html = renderInvoicesView();
+  viewRoot.innerHTML = html;
+  wireViewEvents();
+}
+
+function wireViewEvents() {
+  // dashboard quicknav
+  document.querySelectorAll('[data-quicknav]').forEach(b => b.addEventListener('click', () => { VIEW = b.dataset.quicknav; renderAll(); }));
+
+  // clients
+  const addClientBtn = document.getElementById('dtl-add-client');
+  if (addClientBtn) addClientBtn.addEventListener('click', () => openClientModal(null));
+  document.querySelectorAll('[data-client-id]').forEach(card => card.addEventListener('click', () => openClientModal(card.dataset.clientId)));
+  const clientSearch = document.getElementById('dtl-client-search');
+  if (clientSearch) {
+    clientSearch.addEventListener('input', (e) => { CLIENT_SEARCH = e.target.value; document.getElementById('dtl-view').innerHTML = renderClients(); wireViewEvents(); document.getElementById('dtl-client-search').focus(); document.getElementById('dtl-client-search').selectionStart = document.getElementById('dtl-client-search').value.length; });
+  }
+
+  // inventory
+  const addItemBtn = document.getElementById('dtl-add-item');
+  if (addItemBtn) addItemBtn.addEventListener('click', () => openItemModal(null));
+  document.querySelectorAll('[data-filter]').forEach(t => t.addEventListener('click', () => { INV_FILTER = t.dataset.filter; renderAll(); }));
+  document.querySelectorAll('[data-item-id]').forEach(card => card.addEventListener('click', (e) => {
+    if (e.target.closest('[data-restock]') || e.target.closest('[data-use]')) return;
+    openItemModal(card.dataset.itemId);
+  }));
+  document.querySelectorAll('[data-restock]').forEach(b => b.addEventListener('click', async (e) => {
+    e.stopPropagation();
+    const item = DATA.inventory.find(i => i.id === b.dataset.restock);
+    if (item) { item.qty += 1; await persist('inventory'); renderAll(); }
+  }));
+  document.querySelectorAll('[data-use]').forEach(b => b.addEventListener('click', async (e) => {
+    e.stopPropagation();
+    const item = DATA.inventory.find(i => i.id === b.dataset.use);
+    if (item) { item.qty = Math.max(0, item.qty - 1); await persist('inventory'); renderAll(); }
+  }));
+
+  // calendar
+  const addEventBtn = document.getElementById('dtl-add-event');
+  if (addEventBtn) addEventBtn.addEventListener('click', () => openEventModal(null));
+  const calPrev = document.getElementById('dtl-cal-prev');
+  if (calPrev) calPrev.addEventListener('click', () => { CAL_DATE.setMonth(CAL_DATE.getMonth() - 1); renderAll(); });
+  const calNext = document.getElementById('dtl-cal-next');
+  if (calNext) calNext.addEventListener('click', () => { CAL_DATE.setMonth(CAL_DATE.getMonth() + 1); renderAll(); });
+  const calToday = document.getElementById('dtl-cal-today');
+  if (calToday) calToday.addEventListener('click', () => { CAL_DATE = new Date(); renderAll(); });
+  document.querySelectorAll('[data-cal-day]').forEach(cell => cell.addEventListener('click', () => openDayModal(cell.dataset.calDay)));
+
+  // process guides
+  const addGuideBtn = document.getElementById('dtl-add-guide');
+  if (addGuideBtn) addGuideBtn.addEventListener('click', openGuideModal);
+  document.querySelectorAll('[data-guide-id]').forEach(card => card.addEventListener('click', () => { ACTIVE_GUIDE_ID = card.dataset.guideId; renderAll(); }));
+  const backBtn = document.getElementById('dtl-guide-back');
+  if (backBtn) backBtn.addEventListener('click', () => { ACTIVE_GUIDE_ID = null; renderAll(); });
+  const delGuideBtn = document.getElementById('dtl-del-guide');
+  if (delGuideBtn) delGuideBtn.addEventListener('click', async () => {
+    DATA.guides = DATA.guides.filter(g => g.id !== ACTIVE_GUIDE_ID);
+    delete GUIDE_PROGRESS[ACTIVE_GUIDE_ID];
+    ACTIVE_GUIDE_ID = null;
+    await persist('guides'); toast('Guide deleted'); renderAll();
+  });
+  document.querySelectorAll('[data-step-idx]').forEach(step => step.addEventListener('click', () => {
+    const gid = ACTIVE_GUIDE_ID;
+    const idx = parseInt(step.dataset.stepIdx, 10);
+    if (!GUIDE_PROGRESS[gid]) GUIDE_PROGRESS[gid] = new Set();
+    if (GUIDE_PROGRESS[gid].has(idx)) GUIDE_PROGRESS[gid].delete(idx); else GUIDE_PROGRESS[gid].add(idx);
+    renderAll();
+  }));
+  const resetBtn = document.getElementById('dtl-reset-progress');
+  if (resetBtn) resetBtn.addEventListener('click', () => { GUIDE_PROGRESS[ACTIVE_GUIDE_ID] = new Set(); renderAll(); });
+
+  // invoices & pricing
+  document.querySelectorAll('[data-invtab]').forEach(t => t.addEventListener('click', () => { INVOICE_TAB = t.dataset.invtab; renderAll(); }));
+  const addInvoiceBtn = document.getElementById('dtl-add-invoice');
+  if (addInvoiceBtn) addInvoiceBtn.addEventListener('click', () => openInvoiceModal(null));
+  const addPriceBtn = document.getElementById('dtl-add-price');
+  if (addPriceBtn) addPriceBtn.addEventListener('click', () => openPriceModal(null));
+  document.querySelectorAll('[data-invoice-id]').forEach(row => row.addEventListener('click', () => openInvoiceModal(row.dataset.invoiceId)));
+  document.querySelectorAll('[data-price-id]').forEach(row => row.addEventListener('click', () => openPriceModal(row.dataset.priceId)));
+}
+
+/* ============================ AUTH ============================ */
+let AUTH_MODE = 'signin'; // 'signin' | 'signup'
+
+function showAuthGate() {
+  document.getElementById('dtl-auth-gate').style.display = 'flex';
+  document.getElementById('dtl-root').style.display = 'none';
+}
+function showApp() {
+  document.getElementById('dtl-auth-gate').style.display = 'none';
+  document.getElementById('dtl-root').style.display = 'grid';
+}
+function setAuthError(msg) { document.getElementById('dtl-auth-error').textContent = msg || ''; }
+
+function wireAuthGate() {
+  if (!supabase) {
+    setAuthError('This copy has no Supabase project connected yet — see the setup instructions.');
+    return;
+  }
+  document.querySelectorAll('[data-authtab]').forEach(tab => {
+    tab.addEventListener('click', () => {
+      AUTH_MODE = tab.dataset.authtab;
+      document.querySelectorAll('[data-authtab]').forEach(t => t.classList.toggle('active', t.dataset.authtab === AUTH_MODE));
+      document.getElementById('dtl-auth-title').textContent = AUTH_MODE === 'signin' ? 'Welcome back' : 'Create your account';
+      document.getElementById('dtl-auth-sub').textContent = AUTH_MODE === 'signin' ? 'Sign in to sync your data across every device.' : 'One account, all your devices, always in sync.';
+      document.getElementById('dtl-auth-submit').textContent = AUTH_MODE === 'signin' ? 'Sign In' : 'Create Account';
+      setAuthError('');
+    });
+  });
+  document.getElementById('dtl-auth-submit').addEventListener('click', handleAuthSubmit);
+  document.getElementById('f-auth-password').addEventListener('keydown', (e) => { if (e.key === 'Enter') handleAuthSubmit(); });
+}
+async function handleAuthSubmit() {
+  const email = document.getElementById('f-auth-email').value.trim();
+  const password = document.getElementById('f-auth-password').value;
+  if (!email || !password) { setAuthError('Enter an email and password.'); return; }
+  if (password.length < 6) { setAuthError('Password must be at least 6 characters.'); return; }
+  setAuthError('');
+  const btn = document.getElementById('dtl-auth-submit');
+  btn.disabled = true; btn.textContent = 'Please wait…';
+  try {
+    if (AUTH_MODE === 'signin') {
+      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+      if (error) throw error;
+      CURRENT_USER = data.user;
+    } else {
+      const { data, error } = await supabase.auth.signUp({ email, password });
+      if (error) throw error;
+      if (!data.session) {
+        setAuthError('Account created — check your email to confirm, then sign in.');
+        btn.disabled = false; btn.textContent = 'Create Account';
+        return;
+      }
+      CURRENT_USER = data.user;
+    }
+    await startApp();
+  } catch (e) {
+    setAuthError(e.message || 'Something went wrong.');
+    btn.disabled = false; btn.textContent = AUTH_MODE === 'signin' ? 'Sign In' : 'Create Account';
+  }
+}
+async function handleLogout() {
+  try { await supabase.auth.signOut(); } catch (e) {}
+  CURRENT_USER = null;
+  DATA = { clients: [], inventory: [], events: [], guides: [], pricing: [], invoices: [] };
+  showAuthGate();
+}
+async function startApp() {
+  showApp();
+  const emailEl = document.getElementById('dtl-account-email');
+  if (emailEl && CURRENT_USER) emailEl.textContent = CURRENT_USER.email;
+  await loadData();
+  renderAll();
+}
+
+/* ============================ BACKUP / RESTORE ============================ */
+function exportBackup() {
+  const payload = { exportedAt: new Date().toISOString(), data: DATA };
+  const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `lustre-backup-${todayStr()}.json`;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+  toast('Backup downloaded');
+}
+async function importBackupFile(file) {
+  try {
+    const text = await file.text();
+    const parsed = JSON.parse(text);
+    const incoming = parsed.data || parsed; // allow raw DATA object too
+    const keys = ['clients', 'inventory', 'events', 'guides', 'pricing', 'invoices'];
+    let restored = 0;
+    for (const key of keys) {
+      if (Array.isArray(incoming[key])) { DATA[key] = incoming[key]; await persist(key); restored++; }
+    }
+    if (!restored) { toast('No recognizable data in that file'); return; }
+    ACTIVE_GUIDE_ID = null;
+    renderAll();
+    toast('Backup restored');
+  } catch (e) {
+    toast('Could not read that backup file');
+  }
+}
+
+/* ============================ INIT ============================ */
+async function init() {
+  wireAuthGate();
+  const exportBtn = document.getElementById('dtl-export-btn');
+  const importBtn = document.getElementById('dtl-import-btn');
+  const importFile = document.getElementById('dtl-import-file');
+  const logoutBtn = document.getElementById('dtl-logout-btn');
+  if (exportBtn) exportBtn.addEventListener('click', exportBackup);
+  if (importBtn) importBtn.addEventListener('click', () => importFile.click());
+  if (logoutBtn) logoutBtn.addEventListener('click', handleLogout);
+  if (importFile) importFile.addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if (file) importBackupFile(file);
+    importFile.value = '';
+  });
+  setInterval(renderClock, 30000);
+
+  if (!supabase) { showAuthGate(); return; }
+  try {
+    const { data } = await supabase.auth.getSession();
+    if (data.session) {
+      CURRENT_USER = data.session.user;
+      await startApp();
+    } else {
+      showAuthGate();
+    }
+  } catch (e) {
+    showAuthGate();
+  }
+}
+init();
+
+})();
+</script>
+
+</body>
+</html>
