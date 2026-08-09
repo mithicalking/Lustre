@@ -39,6 +39,10 @@
   --teal-soft: #1c2f2d;
   --rose: #ef82ab;
   --rose-soft: #33212b;
+  --lime: #a3d65c;
+  --lime-soft: #26301c;
+  --coral: #ff8b73;
+  --coral-soft: #33231d;
   --radius: 10px;
   --font-display: 'Oswald', sans-serif;
   --font-body: 'Inter', sans-serif;
@@ -302,15 +306,32 @@
 .dtl-last-service { margin-top: 12px; font-size: 11px; color: var(--text-faint); border-top: 1px solid var(--border); padding-top: 10px; }
 
 .dtl-inv-card { display: flex; flex-direction: column; gap: 10px; }
+.dtl-inv-card.in-laundry { border-left: 3px solid var(--accent-2); }
 .dtl-inv-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
 .dtl-inv-name { font-weight: 700; font-size: 14px; }
 .dtl-inv-cat { font-size: 10.5px; text-transform: uppercase; letter-spacing: .05em; color: var(--text-faint); margin-top: 3px; }
 .dtl-tag { font-size: 10px; padding: 3px 8px; border-radius: 5px; background: var(--surface-2); color: var(--text-dim); text-transform: uppercase; letter-spacing: .04em; font-weight: 700; }
 .dtl-tag.chemical { color: var(--accent-2); background: rgba(79,184,224,0.13); }
 .dtl-tag.tool { color: var(--accent); background: var(--accent-soft); }
-.dtl-stock-bar-track { height: 6px; border-radius: 4px; background: var(--bg-elev); overflow: hidden; border: 1px solid var(--border); }
-.dtl-stock-bar-fill { height: 100%; border-radius: 4px; background: var(--success); }
+.dtl-tag.power_tool { color: var(--teal); background: var(--teal-soft); }
+.dtl-tag.accessory { color: var(--violet); background: var(--violet-soft); }
+.dtl-laundry-badge {
+  display: inline-flex; align-items: center; gap: 5px; font-size: 11px; color: var(--accent-2);
+  background: rgba(79,184,224,0.12); border-radius: 100px; padding: 3px 9px; font-weight: 700;
+}
+.dtl-dilution-line { font-size: 11.5px; color: var(--text-faint); margin-top: -2px; }
+.dtl-dilution-line b { color: var(--text-dim); font-weight: 700; }
+.dtl-quickselect { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; }
+.dtl-quickselect-chip {
+  font-size: 11.5px; font-weight: 600; padding: 6px 12px; border-radius: 100px; cursor: pointer;
+  background: var(--surface-2); border: 1px solid var(--border); color: var(--text-dim);
+}
+.dtl-quickselect-chip:hover { border-color: var(--text-faint); color: var(--text); }
+.dtl-quickselect-chip.active { background: rgba(76,175,109,0.14); color: var(--success); border-color: rgba(76,175,109,0.4); }
+.dtl-stock-bar-track { height: 6px; border-radius: 4px; background: var(--bg-elev); overflow: hidden; border: 1px solid var(--border); display: flex; }
+.dtl-stock-bar-fill { height: 100%; background: var(--success); }
 .dtl-stock-bar-fill.low { background: var(--danger); }
+.dtl-stock-bar-laundry { height: 100%; background: var(--accent-2); }
 .dtl-stock-nums { display: flex; justify-content: space-between; font-size: 11px; color: var(--text-faint); }
 .dtl-inv-actions { display: flex; gap: 8px; margin-top: 2px; }
 
@@ -379,6 +400,7 @@
 .dtl-invoice-total { font-family: var(--font-display); font-size: 15px; }
 .dtl-pill.paid { background: rgba(76,175,109,0.15); color: var(--success); }
 .dtl-pill.unpaid { background: rgba(226,87,76,0.15); color: var(--danger); }
+.dtl-pill.uncompleted { background: rgba(232,163,61,0.15); color: var(--accent); }
 
 .dtl-price-row {
   display: flex; align-items: center; gap: 14px; padding: 12px 14px; border-radius: 8px; background: var(--surface);
@@ -397,6 +419,91 @@
 .dtl-invoice-total-line { display: flex; justify-content: space-between; align-items: center; padding: 12px 0 4px 0; margin-top: 6px; border-top: 1px dashed var(--border); }
 .dtl-invoice-total-line .lbl { font-size: 12px; color: var(--text-faint); text-transform: uppercase; letter-spacing: .05em; font-weight: 700; }
 .dtl-invoice-total-line .amt { font-family: var(--font-display); font-size: 22px; color: var(--violet); }
+.dtl-invoice-balance-line { display: flex; justify-content: space-between; font-size: 12px; color: var(--text-faint); padding: 2px 0; }
+.dtl-invoice-balance-line .amt { color: var(--danger); font-weight: 700; }
+
+/* ---------- BUY LIST ---------- */
+.dtl-buylist-row {
+  display: flex; align-items: center; gap: 12px; padding: 11px 14px; border-radius: 8px; background: var(--surface);
+  border: 1px solid var(--border);
+}
+.dtl-buylist-row.reorder { border-left: 3px solid var(--danger); }
+.dtl-buylist-row .bl-info { flex: 1; min-width: 0; }
+.dtl-buylist-row .bl-name { font-weight: 700; font-size: 13.5px; }
+.dtl-buylist-row .bl-meta { font-size: 11.5px; color: var(--text-faint); margin-top: 2px; }
+
+/* ---------- CALL / TEXT ---------- */
+.dtl-calltext-row {
+  display: flex; align-items: center; gap: 12px; padding: 11px 14px; border-radius: 8px; background: var(--surface);
+  border: 1px solid var(--border);
+}
+.dtl-calltext-row.done { opacity: 0.55; }
+.dtl-calltext-row .ct-info { flex: 1; min-width: 0; cursor: pointer; }
+.dtl-calltext-row .ct-name { font-weight: 700; font-size: 13.5px; }
+.dtl-calltext-row.done .ct-name { text-decoration: line-through; }
+.dtl-calltext-row .ct-reason { font-size: 11.5px; color: var(--text-faint); margin-top: 2px; }
+.dtl-calltext-actions { display: flex; gap: 6px; flex-shrink: 0; }
+.dtl-ct-iconbtn {
+  width: 32px; height: 32px; border-radius: 7px; border: 1px solid var(--border); background: var(--surface-2);
+  color: var(--text-dim); display: flex; align-items: center; justify-content: center; text-decoration: none;
+}
+.dtl-ct-iconbtn svg { width: 15px; height: 15px; }
+.dtl-ct-iconbtn.call:hover { color: var(--success); border-color: rgba(76,175,109,0.4); }
+.dtl-ct-iconbtn.text:hover { color: var(--cyan); border-color: rgba(95,212,224,0.4); }
+.dtl-ct-iconbtn.done-toggle:hover { color: var(--accent); border-color: rgba(232,163,61,0.4); }
+
+/* ---------- REPORTS ---------- */
+.dtl-report-row { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+.dtl-report-label { width: 96px; flex-shrink: 0; font-size: 12px; color: var(--text-dim); font-weight: 600; }
+.dtl-report-track { flex: 1; height: 18px; border-radius: 5px; background: var(--bg-elev); border: 1px solid var(--border); overflow: hidden; }
+.dtl-report-fill { height: 100%; background: linear-gradient(90deg, var(--accent-2), var(--accent)); border-radius: 5px; }
+.dtl-report-value { width: 74px; flex-shrink: 0; text-align: right; font-family: var(--font-display); font-size: 13px; color: var(--text); }
+.dtl-report-rank-row { display: flex; align-items: center; gap: 10px; padding: 9px 10px; border-radius: 8px; background: var(--bg-elev); border: 1px solid var(--border); margin-bottom: 6px; }
+.dtl-report-rank-num { width: 20px; text-align: center; font-family: var(--font-display); color: var(--text-faint); font-size: 12px; }
+.dtl-report-rank-name { flex: 1; font-size: 13px; font-weight: 600; }
+.dtl-report-rank-value { font-family: var(--font-display); font-size: 13px; color: var(--accent); }
+
+/* ---------- REPORTS ---------- */
+.dtl-report-bar-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+.dtl-report-bar-label { width: 96px; font-size: 12px; color: var(--text-dim); flex-shrink: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.dtl-report-bar-track { flex: 1; height: 10px; background: var(--bg-elev); border-radius: 5px; overflow: hidden; border: 1px solid var(--border); }
+.dtl-report-bar-fill { height: 100%; background: var(--teal); border-radius: 5px; }
+.dtl-report-bar-value { width: 74px; text-align: right; font-family: var(--font-display); font-size: 12.5px; color: var(--text); flex-shrink: 0; }
+.dtl-report-row { display: flex; align-items: center; gap: 10px; padding: 9px 12px; border-radius: 8px; background: var(--bg-elev); border: 1px solid var(--border); margin-bottom: 6px; }
+.dtl-report-row .rank { font-family: var(--font-display); font-size: 12px; color: var(--text-faint); width: 18px; }
+.dtl-report-row .nm { flex: 1; font-size: 13px; font-weight: 600; }
+.dtl-report-row .val { font-family: var(--font-display); font-size: 13.5px; color: var(--teal); }
+
+/* ---------- BUY LIST ---------- */
+.dtl-buy-row { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 8px; background: var(--surface); border: 1px solid var(--border); margin-bottom: 8px; }
+.dtl-buy-row.low { border-left: 3px solid var(--danger); }
+.dtl-buy-info { flex: 1; min-width: 0; }
+.dtl-buy-info .nm { font-weight: 700; font-size: 13.5px; }
+.dtl-buy-info .meta { font-size: 11.5px; color: var(--text-faint); }
+.dtl-buy-check {
+  width: 22px; height: 22px; border-radius: 6px; border: 1px solid var(--border); background: var(--bg-elev);
+  cursor: pointer; flex-shrink: 0; display: flex; align-items: center; justify-content: center; color: transparent;
+}
+.dtl-buy-check:hover { border-color: var(--lime); }
+
+/* ---------- CALL / TEXT ---------- */
+.dtl-followup-row { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 8px; background: var(--surface); border: 1px solid var(--border); margin-bottom: 8px; }
+.dtl-followup-row.done { opacity: 0.5; }
+.dtl-followup-type {
+  width: 30px; height: 30px; border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  background: var(--coral-soft); color: var(--coral);
+}
+.dtl-followup-type svg { width: 15px; height: 15px; }
+.dtl-followup-info { flex: 1; min-width: 0; }
+.dtl-followup-info .nm { font-weight: 700; font-size: 13.5px; }
+.dtl-followup-info .reason { font-size: 12px; color: var(--text-faint); }
+.dtl-followup-actions { display: flex; gap: 6px; flex-shrink: 0; }
+.dtl-followup-link {
+  width: 30px; height: 30px; border-radius: 7px; display: flex; align-items: center; justify-content: center;
+  background: var(--surface-2); border: 1px solid var(--border); color: var(--text-dim); text-decoration: none;
+}
+.dtl-followup-link:hover { color: var(--text); border-color: var(--text-faint); }
+.dtl-followup-link svg { width: 14px; height: 14px; }
 
 /* ---------- MODAL ---------- */
 .dtl-modal-overlay {
@@ -467,6 +574,20 @@
 .dtl-modal.variant-process .dtl-btn-primary:hover { background: #7fe0d6; border-color: #7fe0d6; }
 .dtl-modal.variant-process .dtl-field input:focus, .dtl-modal.variant-process .dtl-field select:focus, .dtl-modal.variant-process .dtl-field textarea:focus { border-color: var(--teal); }
 
+.dtl-modal.variant-buylist { border-top-color: var(--lime); }
+.dtl-modal.variant-buylist .dtl-modal-head { background: linear-gradient(135deg, rgba(163,214,92,0.12), transparent 60%); }
+.dtl-modal.variant-buylist .dtl-modal-icon { background: var(--lime-soft); color: var(--lime); }
+.dtl-modal.variant-buylist .dtl-btn-primary { background: var(--lime); border-color: var(--lime); color: #16210a; }
+.dtl-modal.variant-buylist .dtl-btn-primary:hover { background: #b8e37e; border-color: #b8e37e; }
+.dtl-modal.variant-buylist .dtl-field input:focus, .dtl-modal.variant-buylist .dtl-field select:focus, .dtl-modal.variant-buylist .dtl-field textarea:focus { border-color: var(--lime); }
+
+.dtl-modal.variant-calltext { border-top-color: var(--coral); }
+.dtl-modal.variant-calltext .dtl-modal-head { background: linear-gradient(135deg, rgba(255,139,115,0.12), transparent 60%); }
+.dtl-modal.variant-calltext .dtl-modal-icon { background: var(--coral-soft); color: var(--coral); }
+.dtl-modal.variant-calltext .dtl-btn-primary { background: var(--coral); border-color: var(--coral); color: #2b0f08; }
+.dtl-modal.variant-calltext .dtl-btn-primary:hover { background: #ffab98; border-color: #ffab98; }
+.dtl-modal.variant-calltext .dtl-field input:focus, .dtl-modal.variant-calltext .dtl-field select:focus, .dtl-modal.variant-calltext .dtl-field textarea:focus { border-color: var(--coral); }
+
 /* header "top right" action button — colored per page */
 .dtl-btn-accent-client { background: var(--accent-2); border-color: var(--accent-2); color: #0c2430; }
 .dtl-btn-accent-client:hover { background: #6ac6e8; border-color: #6ac6e8; }
@@ -480,6 +601,10 @@
 .dtl-btn-accent-invoice:hover { background: #caa2f5; border-color: #caa2f5; }
 .dtl-btn-accent-pricing { background: var(--rose); border-color: var(--rose); color: #2b0f1b; }
 .dtl-btn-accent-pricing:hover { background: #f7a8c4; border-color: #f7a8c4; }
+.dtl-btn-accent-buylist { background: var(--lime); border-color: var(--lime); color: #16210a; }
+.dtl-btn-accent-buylist:hover { background: #b8e37e; border-color: #b8e37e; }
+.dtl-btn-accent-calltext { background: var(--coral); border-color: var(--coral); color: #2b0f08; }
+.dtl-btn-accent-calltext:hover { background: #ffab98; border-color: #ffab98; }
 
 .dtl-field { margin-bottom: 14px; }
 .dtl-field label { display: block; font-size: 11.5px; text-transform: uppercase; letter-spacing: .05em; color: var(--text-faint); font-weight: 700; margin-bottom: 6px; }
@@ -498,8 +623,14 @@
   position: fixed; bottom: 24px; right: 24px; background: var(--surface-2); border: 1px solid var(--border);
   border-left: 3px solid var(--success); color: var(--text); padding: 12px 18px; border-radius: 8px; font-size: 13px;
   z-index: 2000; box-shadow: 0 10px 30px rgba(0,0,0,0.4); opacity: 0; transform: translateY(8px); transition: all .25s;
+  display: flex; align-items: center; gap: 14px;
 }
 .dtl-toast.show { opacity: 1; transform: translateY(0); }
+.dtl-toast-undo {
+  background: none; border: none; color: var(--accent); font-weight: 700; font-size: 12.5px; cursor: pointer;
+  text-transform: uppercase; letter-spacing: .04em; padding: 2px 0; flex-shrink: 0;
+}
+.dtl-toast-undo:hover { text-decoration: underline; }
 
 @media (max-width: 760px) {
   .dtl-root { grid-template-columns: 1fr; }
@@ -618,6 +749,12 @@ const ICONS = {
   jobs: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="7" width="18" height="14" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M3 12h18"/></svg>',
   invoices: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2V3z"/><path d="M9 8h6"/><path d="M9 12h6"/><path d="M9 16h3"/></svg>',
   dollar: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2v20"/><path d="M17 6.5c0-1.9-2.2-3.5-5-3.5s-5 1.4-5 3.5 2.2 3 5 3.5 5 1.6 5 3.5-2.2 3.5-5 3.5-5-1.6-5-3.5"/></svg>',
+  laundry: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="12" cy="13" r="5"/><circle cx="12" cy="13" r="2"/><circle cx="6.5" cy="6" r="0.7" fill="currentColor" stroke="none"/><circle cx="9" cy="6" r="0.7" fill="currentColor" stroke="none"/></svg>',
+  reports: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 20V10"/><path d="M12 20V4"/><path d="M20 20v-7"/><path d="M3 20h18"/></svg>',
+  buylist: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="9" cy="20" r="1.4"/><circle cx="17" cy="20" r="1.4"/><path d="M2 3h2l2.4 12.2a2 2 0 0 0 2 1.6h8.6a2 2 0 0 0 2-1.6L21 7H6"/></svg>',
+  calltext: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 5c0 8.8 6.2 15 15 15l2-3.6-5-2-1.5 1.9A11.6 11.6 0 0 1 8.7 9.5L10.6 8 8.6 3 4 5z"/></svg>',
+  texticon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 11.5a8.38 8.38 0 0 1-4.5 7.4l-5 3.1.4-3.2A8.5 8.5 0 1 1 21 11.5z"/></svg>',
+  check: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6L9 17l-5-5"/></svg>',
   warn: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3l10 18H2L12 3z"/><path d="M12 10v4"/><circle cx="12" cy="17" r="0.6" fill="currentColor"/></svg>',
   plus: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 5v14M5 12h14"/></svg>',
   chevL: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M15 6l-6 6 6 6"/></svg>',
@@ -638,15 +775,17 @@ const supabase = (SUPABASE_URL.startsWith('http') && window.supabase)
   : null;
 
 /* ============================ STATE ============================ */
-let DATA = { clients: [], inventory: [], events: [], guides: [] };
+let DATA = { clients: [], inventory: [], events: [], guides: [], pricing: [], invoices: [], buylist: [], followups: [] };
 let VIEW = 'dashboard';
 let CAL_DATE = new Date();
 let ACTIVE_GUIDE_ID = null;
 let GUIDE_PROGRESS = {}; // guideId -> Set of checked step ids (in-memory, per session)
+let GUIDE_DEDUCTED = new Set(); // guideId -> already auto-deducted inventory for this session
 let INV_FILTER = 'all';
 let CLIENT_SEARCH = '';
 let INVOICE_TAB = 'invoices'; // 'invoices' | 'pricing'
 let CURRENT_USER = null;
+let CALLTEXT_FILTER = 'pending'; // 'pending' | 'done' | 'all'
 
 const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
 const todayStr = () => new Date().toISOString().slice(0, 10);
@@ -677,16 +816,17 @@ function seedData() {
       { id: uid(), name: 'David Kim', phone: '(555) 340-6612', email: 'dkim@email.com', vehicle: '2022 BMW 330i', address: '19 Crestview Ct', notes: 'Very particular about swirl marks.', lastService: iso(-3) },
     ],
     inventory: [
-      { id: uid(), name: 'pH Neutral Car Shampoo', category: 'chemical', qty: 4, unit: 'gal', lowThreshold: 2, notes: '' },
-      { id: uid(), name: 'Snow Foam Pre-Wash', category: 'chemical', qty: 1, unit: 'gal', lowThreshold: 2, notes: 'Reorder soon' },
-      { id: uid(), name: 'Ceramic Coating Kit', category: 'chemical', qty: 3, unit: 'kits', lowThreshold: 2, notes: '' },
-      { id: uid(), name: 'All-Purpose Cleaner (APC)', category: 'chemical', qty: 1, unit: 'gal', lowThreshold: 2, notes: '' },
-      { id: uid(), name: 'Leather Conditioner', category: 'chemical', qty: 5, unit: 'bottles', lowThreshold: 2, notes: '' },
-      { id: uid(), name: 'Microfiber Towels', category: 'tool', qty: 42, unit: 'pcs', lowThreshold: 15, notes: '' },
-      { id: uid(), name: 'Dual-Action Polisher', category: 'tool', qty: 2, unit: 'units', lowThreshold: 1, notes: '' },
-      { id: uid(), name: 'Foam Cannon', category: 'tool', qty: 1, unit: 'units', lowThreshold: 1, notes: 'Backup on order' },
-      { id: uid(), name: 'Wheel Brush Set', category: 'tool', qty: 3, unit: 'sets', lowThreshold: 1, notes: '' },
-      { id: uid(), name: 'Clay Bar', category: 'chemical', qty: 6, unit: 'pcs', lowThreshold: 3, notes: '' },
+      { id: uid(), name: 'pH Neutral Car Shampoo', category: 'chemical', qty: 4, unit: 'gal', lowThreshold: 2, notes: '', dilutionRatio: '1:256', inLaundry: 0 },
+      { id: uid(), name: 'Snow Foam Pre-Wash', category: 'chemical', qty: 1, unit: 'gal', lowThreshold: 2, notes: 'Reorder soon', dilutionRatio: '10:1', inLaundry: 0 },
+      { id: uid(), name: 'Ceramic Coating Kit', category: 'chemical', qty: 3, unit: 'kits', lowThreshold: 2, notes: '', dilutionRatio: '', inLaundry: 0 },
+      { id: uid(), name: 'All-Purpose Cleaner (APC)', category: 'chemical', qty: 1, unit: 'gal', lowThreshold: 2, notes: '', dilutionRatio: '4:1 heavy / 10:1 light', inLaundry: 0 },
+      { id: uid(), name: 'Leather Conditioner', category: 'chemical', qty: 5, unit: 'bottles', lowThreshold: 2, notes: '', dilutionRatio: '', inLaundry: 0 },
+      { id: uid(), name: 'Microfiber Towels', category: 'accessory', qty: 37, unit: 'pcs', lowThreshold: 15, notes: '', inLaundry: 5 },
+      { id: uid(), name: 'Dual-Action Polisher', category: 'power_tool', qty: 2, unit: 'units', lowThreshold: 1, notes: '' },
+      { id: uid(), name: 'Foam Cannon', category: 'power_tool', qty: 1, unit: 'units', lowThreshold: 1, notes: 'Backup on order' },
+      { id: uid(), name: 'Wheel Brush Set', category: 'accessory', qty: 3, unit: 'sets', lowThreshold: 1, notes: '' },
+      { id: uid(), name: 'Clay Bar', category: 'chemical', qty: 6, unit: 'pcs', lowThreshold: 3, notes: '', dilutionRatio: '', inLaundry: 0 },
+      { id: uid(), name: 'Wash Mitts', category: 'accessory', qty: 6, unit: 'pcs', lowThreshold: 4, notes: '', inLaundry: 2 },
     ],
     events: [],
     guides: [
@@ -768,13 +908,17 @@ function seedData() {
       { id: uid(), service: 'Wheel & Caliper Detail', price: 35, notes: 'Per set of 4', category: 'addon' },
     ],
     invoices: [],
+    buylist: [
+      { id: uid(), name: 'Interior Steam Cleaner (upgrade)', notes: 'Current one is getting weak — compare models', addedAt: todayStr(), purchased: false },
+    ],
+    followups: [],
   };
 }
 
 /* ============================ STORAGE ============================ */
 async function loadData() {
   const seeded = seedData();
-  const keys = ['clients', 'inventory', 'events', 'guides', 'pricing', 'invoices'];
+  const keys = ['clients', 'inventory', 'events', 'guides', 'pricing', 'invoices', 'buylist', 'followups'];
   let rows = [];
   try {
     const { data, error } = await supabase.from('app_data').select('key, value');
@@ -817,6 +961,14 @@ async function loadData() {
       await persist('invoices');
     }
   }
+  if (!DATA.followups || DATA.followups.length === 0) {
+    const c0 = DATA.clients[0], c1 = DATA.clients[1];
+    DATA.followups = [
+      ...(c0 ? [{ id: uid(), name: c0.name, phone: c0.phone || '', clientId: c0.id, type: 'text', reason: 'Confirm tomorrow\'s appointment time', done: false, createdAt: todayStr() }] : []),
+      ...(c1 ? [{ id: uid(), name: c1.name, phone: c1.phone || '', clientId: c1.id, type: 'call', reason: 'Follow up on ceramic coating quote', done: false, createdAt: todayStr() }] : []),
+    ];
+    await persist('followups');
+  }
 }
 async function persist(key) {
   if (!supabase || !CURRENT_USER) return;
@@ -833,14 +985,25 @@ async function persist(key) {
 }
 
 /* ============================ TOAST ============================ */
-function toast(msg) {
+function toast(msg, undoFn) {
   const root = document.getElementById('dtl-toast-root');
   const el = document.createElement('div');
   el.className = 'dtl-toast';
-  el.textContent = msg;
+  const msgSpan = document.createElement('span');
+  msgSpan.textContent = msg;
+  el.appendChild(msgSpan);
+  let timer;
+  const dismiss = () => { clearTimeout(timer); el.classList.remove('show'); setTimeout(() => el.remove(), 300); };
+  if (undoFn) {
+    const undoBtn = document.createElement('button');
+    undoBtn.className = 'dtl-toast-undo';
+    undoBtn.textContent = 'Undo';
+    undoBtn.onclick = () => { undoFn(); dismiss(); };
+    el.appendChild(undoBtn);
+  }
   root.appendChild(el);
   requestAnimationFrame(() => el.classList.add('show'));
-  setTimeout(() => { el.classList.remove('show'); setTimeout(() => el.remove(), 300); }, 2400);
+  timer = setTimeout(dismiss, undoFn ? 5000 : 2400);
 }
 
 /* ============================ MODAL ============================ */
@@ -872,10 +1035,13 @@ function closeModal() { document.getElementById('dtl-modal-root').innerHTML = ''
 const NAV_ITEMS = [
   { id: 'dashboard', label: 'Dashboard', sub: "Today's overview" },
   { id: 'clients', label: 'Clients', sub: 'Customer roster & vehicle info' },
+  { id: 'calltext', label: 'Call / Text', sub: 'Follow-ups to make' },
   { id: 'inventory', label: 'Inventory', sub: 'Chemicals & tools on hand' },
+  { id: 'buylist', label: 'Buy List', sub: 'Restock needs & wishlist' },
   { id: 'calendar', label: 'Calendar', sub: 'Appointments & scheduling' },
   { id: 'process', label: 'Process Guides', sub: 'Step-by-step job checklists' },
   { id: 'invoices', label: 'Pricing & Invoices', sub: 'Service rates and billing' },
+  { id: 'reports', label: 'Reports', sub: 'Revenue & performance' },
 ];
 function renderNav() {
   const nav = document.getElementById('dtl-nav');
@@ -903,9 +1069,12 @@ function renderDashboard() {
   const today = todayStr();
   const todaysEvents = DATA.events.filter(e => e.date === today).sort((a, b) => a.time.localeCompare(b.time));
   const upcoming7 = DATA.events.filter(e => e.date >= today && e.date <= addDays(today, 7));
-  const lowStock = DATA.inventory.filter(i => i.qty <= i.lowThreshold);
+  const lowStock = DATA.inventory.filter(isLowStock);
   const unpaidInvoices = DATA.invoices.filter(i => i.status === 'unpaid');
-  const outstanding = unpaidInvoices.reduce((sum, inv) => sum + invoiceTotal(inv), 0);
+  const outstanding = unpaidInvoices.reduce((sum, inv) => sum + Math.max(0, invoiceTotal(inv) - (Number(inv.depositPaid) || 0)), 0);
+  const yearMonth = today.slice(0, 7);
+  const paidThisMonth = DATA.invoices.filter(i => i.status === 'paid' && (i.date || '').slice(0, 7) === yearMonth);
+  const monthlyTotal = paidThisMonth.reduce((sum, inv) => sum + invoiceTotal(inv), 0);
 
   const kpis = `
     <div class="dtl-kpi-grid">
@@ -914,6 +1083,7 @@ function renderDashboard() {
       <div class="dtl-kpi"><div class="dtl-kpi-icon">${ICONS.inventory}</div><div class="label">Inventory Items</div><div class="value">${DATA.inventory.length}</div><div class="sub">${lowStock.length} running low</div></div>
       <div class="dtl-kpi"><div class="dtl-kpi-icon">${ICONS.warn}</div><div class="label">Low Stock Alerts</div><div class="value ${lowStock.length ? 'warn' : ''}">${lowStock.length}</div><div class="sub">need reorder</div></div>
       <div class="dtl-kpi"><div class="dtl-kpi-icon">${ICONS.dollar}</div><div class="label">Outstanding</div><div class="value ${outstanding ? 'warn' : ''}">$${outstanding.toFixed(0)}</div><div class="sub">${unpaidInvoices.length} unpaid invoice${unpaidInvoices.length === 1 ? '' : 's'}</div></div>
+      <div class="dtl-kpi"><div class="dtl-kpi-icon">${ICONS.dollar}</div><div class="label">This Month</div><div class="value accent">$${monthlyTotal.toFixed(0)}</div><div class="sub">${paidThisMonth.length} paid invoice${paidThisMonth.length === 1 ? '' : 's'} this month</div></div>
     </div>`;
 
   const agendaRows = todaysEvents.length ? todaysEvents.map(e => `
@@ -953,6 +1123,14 @@ function renderDashboard() {
 }
 function addDays(iso, n) { const d = new Date(iso + 'T00:00:00'); d.setDate(d.getDate() + n); return d.toISOString().slice(0, 10); }
 function invoiceTotal(inv) { return (inv.items || []).reduce((sum, it) => sum + (Number(it.qty) || 0) * (Number(it.price) || 0), 0); }
+function undoDelete(key, item) {
+  return async () => {
+    DATA[key] = [...DATA[key], item];
+    await persist(key);
+    renderAll();
+    toast('Restored');
+  };
+}
 function nextInvoiceNumber() {
   const nums = DATA.invoices.map(i => parseInt((i.number || '').replace(/\D/g, ''), 10)).filter(n => !isNaN(n));
   const next = (nums.length ? Math.max(...nums) : 1000) + 1;
@@ -1008,7 +1186,7 @@ function clientFormHTML(c) {
   `;
 }
 
-function openClientModal(clientId) {
+function openClientModal(clientId, onCreated) {
   const existing = clientId ? DATA.clients.find(c => c.id === clientId) : null;
   openModal({
     title: existing ? 'Edit Client' : 'Add Client',
@@ -1022,10 +1200,10 @@ function openClientModal(clientId) {
       <button class="dtl-btn dtl-btn-ghost" id="dtl-cancel">Cancel</button>
       <button class="dtl-btn dtl-btn-primary" id="dtl-save-client">${existing ? 'Save Changes' : 'Add Client'}</button>`,
     onMount: () => {
-      document.getElementById('dtl-cancel').onclick = closeModal;
+      document.getElementById('dtl-cancel').onclick = () => { closeModal(); if (onCreated) onCreated(null); };
       if (existing) document.getElementById('dtl-del-client').onclick = async () => {
         DATA.clients = DATA.clients.filter(c => c.id !== existing.id);
-        await persist('clients'); closeModal(); toast('Client deleted'); renderAll();
+        await persist('clients'); closeModal(); toast('Client deleted', undoDelete('clients', existing)); renderAll();
       };
       document.getElementById('dtl-save-client').onclick = async () => {
         const name = document.getElementById('f-name').value.trim();
@@ -1042,31 +1220,50 @@ function openClientModal(clientId) {
         };
         if (existing) { DATA.clients = DATA.clients.map(c => c.id === existing.id ? obj : c); }
         else { DATA.clients.push(obj); }
-        await persist('clients'); closeModal(); toast(existing ? 'Client updated' : 'Client added'); renderAll();
+        await persist('clients'); closeModal();
+        if (onCreated) { onCreated(obj); } else { toast(existing ? 'Client updated' : 'Client added'); renderAll(); }
       };
     },
   });
 }
 
 /* ============================ INVENTORY ============================ */
+const INV_CATEGORY_LABELS = { chemical: 'Chemical', tool: 'Tool', power_tool: 'Power Tool', accessory: 'Accessory' };
+const INV_WASHABLE = ['tool', 'accessory'];
+function isLowStock(item) { return (item.qty + (item.inLaundry || 0)) <= item.lowThreshold; }
+
 function renderInventory() {
   document.getElementById('dtl-header-action').innerHTML = `<button class="dtl-btn dtl-btn-primary dtl-btn-accent-inventory" id="dtl-add-item">${ICONS.plus} Add Item</button>`;
   let items = DATA.inventory;
   if (INV_FILTER !== 'all') items = items.filter(i => i.category === INV_FILTER);
   const cards = items.length ? items.map(i => {
-    const pct = Math.max(0, Math.min(100, (i.qty / Math.max(i.lowThreshold * 2, 1)) * 100));
-    const low = i.qty <= i.lowThreshold;
+    const inLaundry = i.inLaundry || 0;
+    const denom = Math.max(i.lowThreshold * 2, 1);
+    const qtyPct = Math.max(0, Math.min(100, (i.qty / denom) * 100));
+    const laundryPct = Math.max(0, Math.min(100 - qtyPct, (inLaundry / denom) * 100));
+    const low = (i.qty + inLaundry) <= i.lowThreshold; // laundry still counts as owned stock — no false reorder alerts
+    const washable = INV_WASHABLE.includes(i.category);
     return `
-    <div class="dtl-card dtl-inv-card" data-item-id="${i.id}">
+    <div class="dtl-card dtl-inv-card ${inLaundry > 0 ? 'in-laundry' : ''}" data-item-id="${i.id}">
       <div class="dtl-inv-top">
         <div><div class="dtl-inv-name">${escapeHTML(i.name)}</div><div class="dtl-inv-cat">${escapeHTML(i.notes || '')}</div></div>
-        <span class="dtl-tag ${i.category}">${i.category}</span>
+        <span class="dtl-tag ${i.category}">${INV_CATEGORY_LABELS[i.category] || i.category}</span>
       </div>
-      <div class="dtl-stock-bar-track"><div class="dtl-stock-bar-fill ${low ? 'low' : ''}" style="width:${pct}%"></div></div>
-      <div class="dtl-stock-nums"><span>${i.qty} ${escapeHTML(i.unit)} on hand</span><span>min ${i.lowThreshold}</span></div>
+      ${i.dilutionRatio ? `<div class="dtl-dilution-line">Dilution: <b>${escapeHTML(i.dilutionRatio)}</b></div>` : ''}
+      <div class="dtl-stock-bar-track">
+        <div class="dtl-stock-bar-fill ${low ? 'low' : ''}" style="width:${qtyPct}%"></div>
+        <div class="dtl-stock-bar-laundry" style="width:${laundryPct}%"></div>
+      </div>
+      <div class="dtl-stock-nums">
+        <span>${i.qty} ${escapeHTML(i.unit)} on hand</span>
+        <span>min ${i.lowThreshold}</span>
+      </div>
+      ${inLaundry > 0 ? `<div><span class="dtl-laundry-badge">${ICONS.laundry} ${inLaundry} in laundry</span></div>` : ''}
       <div class="dtl-inv-actions">
         <button class="dtl-btn dtl-btn-sm" data-restock="${i.id}">+1 ${escapeHTML(i.unit)}</button>
         <button class="dtl-btn dtl-btn-sm dtl-btn-ghost" data-use="${i.id}">-1 ${escapeHTML(i.unit)}</button>
+        ${washable && i.qty > 0 ? `<button class="dtl-btn dtl-btn-sm dtl-btn-ghost" data-tolaundry="${i.id}">${ICONS.laundry} Wash</button>` : ''}
+        ${washable && inLaundry > 0 ? `<button class="dtl-btn dtl-btn-sm dtl-btn-ghost" data-fromlaundry="${i.id}">Return 1</button>` : ''}
       </div>
     </div>`;
   }).join('') : `<div class="dtl-empty">No items in this category yet.</div>`;
@@ -1077,19 +1274,26 @@ function renderInventory() {
         <div class="dtl-tab ${INV_FILTER === 'all' ? 'active' : ''}" data-filter="all">All</div>
         <div class="dtl-tab ${INV_FILTER === 'chemical' ? 'active' : ''}" data-filter="chemical">Chemicals</div>
         <div class="dtl-tab ${INV_FILTER === 'tool' ? 'active' : ''}" data-filter="tool">Tools</div>
+        <div class="dtl-tab ${INV_FILTER === 'power_tool' ? 'active' : ''}" data-filter="power_tool">Power Tools</div>
+        <div class="dtl-tab ${INV_FILTER === 'accessory' ? 'active' : ''}" data-filter="accessory">Accessories</div>
       </div>
-      <div style="color:var(--text-faint); font-size:12.5px;">${DATA.inventory.filter(i => i.qty <= i.lowThreshold).length} low stock</div>
+      <div style="color:var(--text-faint); font-size:12.5px;">${DATA.inventory.filter(isLowStock).length} low stock</div>
     </div>
     <div class="dtl-card-grid">${cards}</div>`;
 }
 
 function itemFormHTML(i) {
-  i = i || { name: '', category: 'chemical', qty: 0, unit: '', lowThreshold: 1, notes: '' };
+  i = i || { name: '', category: 'chemical', qty: 0, unit: '', lowThreshold: 1, notes: '', dilutionRatio: '' };
   return `
     <div class="dtl-field"><label>Item Name</label><input id="f-iname" value="${escapeHTML(i.name)}" placeholder="Ceramic Coating Kit"></div>
     <div class="dtl-field-row">
       <div class="dtl-field"><label>Category</label>
-        <select id="f-icat"><option value="chemical" ${i.category === 'chemical' ? 'selected' : ''}>Chemical</option><option value="tool" ${i.category === 'tool' ? 'selected' : ''}>Tool</option></select>
+        <select id="f-icat">
+          <option value="chemical" ${i.category === 'chemical' ? 'selected' : ''}>Chemical</option>
+          <option value="tool" ${i.category === 'tool' ? 'selected' : ''}>Tool</option>
+          <option value="power_tool" ${i.category === 'power_tool' ? 'selected' : ''}>Power Tool</option>
+          <option value="accessory" ${i.category === 'accessory' ? 'selected' : ''}>Accessory</option>
+        </select>
       </div>
       <div class="dtl-field"><label>Unit</label><input id="f-iunit" value="${escapeHTML(i.unit)}" placeholder="gal, pcs, bottles..."></div>
     </div>
@@ -1097,6 +1301,7 @@ function itemFormHTML(i) {
       <div class="dtl-field"><label>Quantity on Hand</label><input type="number" id="f-iqty" value="${i.qty}" min="0"></div>
       <div class="dtl-field"><label>Low Stock Threshold</label><input type="number" id="f-ithresh" value="${i.lowThreshold}" min="0"></div>
     </div>
+    <div class="dtl-field" id="f-idilution-wrap" style="display:none;"><label>Dilution Ratio</label><input id="f-idilution" value="${escapeHTML(i.dilutionRatio || '')}" placeholder="e.g. 10:1 or 1:256"></div>
     <div class="dtl-field"><label>Notes</label><textarea id="f-inotes" placeholder="Supplier, reorder link...">${escapeHTML(i.notes)}</textarea></div>
   `;
 }
@@ -1114,10 +1319,14 @@ function openItemModal(itemId) {
       <button class="dtl-btn dtl-btn-ghost" id="dtl-cancel">Cancel</button>
       <button class="dtl-btn dtl-btn-primary" id="dtl-save-item">${existing ? 'Save Changes' : 'Add Item'}</button>`,
     onMount: () => {
+      const catSel = document.getElementById('f-icat');
+      const dilutionWrap = document.getElementById('f-idilution-wrap');
+      const syncDilution = () => { dilutionWrap.style.display = catSel.value === 'chemical' ? 'block' : 'none'; };
+      catSel.addEventListener('change', syncDilution); syncDilution();
       document.getElementById('dtl-cancel').onclick = closeModal;
       if (existing) document.getElementById('dtl-del-item').onclick = async () => {
         DATA.inventory = DATA.inventory.filter(i => i.id !== existing.id);
-        await persist('inventory'); closeModal(); toast('Item deleted'); renderAll();
+        await persist('inventory'); closeModal(); toast('Item deleted', undoDelete('inventory', existing)); renderAll();
       };
       document.getElementById('dtl-save-item').onclick = async () => {
         const name = document.getElementById('f-iname').value.trim();
@@ -1129,7 +1338,9 @@ function openItemModal(itemId) {
           unit: document.getElementById('f-iunit').value.trim() || 'units',
           qty: Math.max(0, parseInt(document.getElementById('f-iqty').value, 10) || 0),
           lowThreshold: Math.max(0, parseInt(document.getElementById('f-ithresh').value, 10) || 0),
+          dilutionRatio: document.getElementById('f-idilution').value.trim(),
           notes: document.getElementById('f-inotes').value.trim(),
+          inLaundry: existing ? (existing.inLaundry || 0) : 0,
         };
         if (existing) { DATA.inventory = DATA.inventory.map(i => i.id === existing.id ? obj : i); }
         else { DATA.inventory.push(obj); }
@@ -1192,7 +1403,11 @@ function eventFormHTML(ev, presetDate) {
       <div class="dtl-field"><label>Time</label><input type="time" id="f-etime" value="${ev.time}"></div>
     </div>
     <div class="dtl-field"><label>Client</label><select id="f-eclient"><option value="">— Select client —</option>${clientOptions}</select></div>
-    <div class="dtl-field"><label>Service / Job Type</label><select id="f-eservice"><option value="">— Select service —</option>${guideOptions}<option value="__custom__">Custom / Other...</option></select></div>
+    <div class="dtl-field">
+      <label>Service / Job Type</label>
+      ${DATA.guides.length ? `<div class="dtl-quickselect" id="f-equickselect">${DATA.guides.map(g => `<button type="button" class="dtl-quickselect-chip ${ev.service === g.name ? 'active' : ''}" data-quicksvc="${escapeHTML(g.name)}">${escapeHTML(g.name)}</button>`).join('')}</div>` : ''}
+      <select id="f-eservice"><option value="">— Select service —</option>${guideOptions}<option value="__custom__">Custom / Other...</option></select>
+    </div>
     <div class="dtl-field" id="f-ecustom-wrap" style="display:none"><label>Custom Service Name</label><input id="f-ecustom"></div>
     <div class="dtl-field"><label>Status</label>
       <select id="f-estatus"><option value="scheduled" ${ev.status === 'scheduled' ? 'selected' : ''}>Scheduled</option><option value="done" ${ev.status === 'done' ? 'selected' : ''}>Done</option><option value="canceled" ${ev.status === 'canceled' ? 'selected' : ''}>Canceled</option></select>
@@ -1218,13 +1433,19 @@ function openEventModal(eventId, presetDate) {
       const customWrap = document.getElementById('f-ecustom-wrap');
       const syncCustom = () => { customWrap.style.display = svcSel.value === '__custom__' ? 'block' : 'none'; };
       svcSel.onchange = syncCustom; syncCustom();
+      const quickWrap = document.getElementById('f-equickselect');
+      if (quickWrap) quickWrap.querySelectorAll('[data-quicksvc]').forEach(chip => chip.addEventListener('click', () => {
+        svcSel.value = chip.dataset.quicksvc;
+        syncCustom();
+        quickWrap.querySelectorAll('[data-quicksvc]').forEach(c => c.classList.toggle('active', c === chip));
+      }));
       if (existing && !DATA.guides.some(g => g.name === existing.service) && existing.service) {
         svcSel.value = '__custom__'; document.getElementById('f-ecustom').value = existing.service; syncCustom();
       }
       document.getElementById('dtl-cancel').onclick = closeModal;
       if (existing) document.getElementById('dtl-del-event').onclick = async () => {
         DATA.events = DATA.events.filter(e => e.id !== existing.id);
-        await persist('events'); closeModal(); toast('Appointment removed'); renderAll();
+        await persist('events'); closeModal(); toast('Appointment removed', undoDelete('events', existing)); renderAll();
       };
       document.getElementById('dtl-save-event').onclick = async () => {
         const clientId = document.getElementById('f-eclient').value;
@@ -1287,6 +1508,34 @@ function renderProcess() {
   return `<div class="dtl-guide-grid">${cards || '<div class="dtl-empty">No process guides yet.</div>'}</div>`;
 }
 
+function maybeAutoDeduct(gid) {
+  const guide = DATA.guides.find(g => g.id === gid);
+  if (!guide || !guide.steps.length) return;
+  const checked = GUIDE_PROGRESS[gid] || new Set();
+  if (checked.size !== guide.steps.length) return; // not complete yet
+  if (GUIDE_DEDUCTED.has(gid)) return; // already deducted this session
+  GUIDE_DEDUCTED.add(gid);
+  autoDeductProducts(guide);
+}
+async function autoDeductProducts(guide) {
+  const deducted = [];
+  const skipped = [];
+  (guide.products || []).forEach(pname => {
+    const item = DATA.inventory.find(i => i.name.trim().toLowerCase() === pname.trim().toLowerCase());
+    if (!item) { skipped.push(pname); return; }
+    if (item.qty <= 0) { skipped.push(`${pname} (already out of stock)`); return; }
+    item.qty -= 1;
+    deducted.push(item.name);
+  });
+  if (deducted.length) {
+    await persist('inventory');
+    toast(`Job complete — used 1x each: ${deducted.join(', ')}`);
+  }
+  if (skipped.length) {
+    toast(`No inventory match for: ${skipped.join(', ')}`);
+  }
+  renderAll();
+}
 function guideDialSVG(pct) {
   const r = 30, c = 2 * Math.PI * r;
   const offset = c - (pct / 100) * c;
@@ -1420,13 +1669,19 @@ function renderInvoicesView() {
 function renderInvoiceList() {
   const sorted = [...DATA.invoices].sort((a, b) => (b.date || '').localeCompare(a.date || ''));
   if (!sorted.length) return `<div class="dtl-empty">No invoices yet. Create one to bill a client for a job.</div>`;
-  const rows = sorted.map(inv => `
+  const rows = sorted.map(inv => {
+    const total = invoiceTotal(inv);
+    const deposit = Number(inv.depositPaid) || 0;
+    const balance = Math.max(0, total - deposit);
+    const depositNote = deposit > 0 && inv.status !== 'paid' ? `<div class="meta">Deposit $${deposit.toFixed(2)} &middot; Balance $${balance.toFixed(2)}</div>` : '';
+    return `
     <div class="dtl-invoice-row" data-invoice-id="${inv.id}">
       <div class="dtl-invoice-num">${escapeHTML(inv.number)}</div>
-      <div class="dtl-invoice-info"><div class="client">${escapeHTML(inv.clientName)}</div><div class="meta">${fmtDate(inv.date)} &middot; ${(inv.items || []).length} item${(inv.items || []).length === 1 ? '' : 's'}</div></div>
-      <div class="dtl-invoice-total">$${invoiceTotal(inv).toFixed(2)}</div>
+      <div class="dtl-invoice-info"><div class="client">${escapeHTML(inv.clientName)}</div><div class="meta">${fmtDate(inv.date)} &middot; ${(inv.items || []).length} item${(inv.items || []).length === 1 ? '' : 's'}</div>${depositNote}</div>
+      <div class="dtl-invoice-total">$${total.toFixed(2)}</div>
       <span class="dtl-pill ${inv.status}">${inv.status}</span>
-    </div>`).join('');
+    </div>`;
+  }).join('');
   return `<div class="dtl-row-list">${rows}</div>`;
 }
 
@@ -1483,7 +1738,7 @@ function openPriceModal(priceId) {
       document.getElementById('dtl-cancel').onclick = closeModal;
       if (existing) document.getElementById('dtl-del-price').onclick = async () => {
         DATA.pricing = DATA.pricing.filter(p => p.id !== existing.id);
-        await persist('pricing'); closeModal(); toast('Service removed'); renderAll();
+        await persist('pricing'); closeModal(); toast('Service removed', undoDelete('pricing', existing)); renderAll();
       };
       document.getElementById('dtl-save-price').onclick = async () => {
         const service = document.getElementById('f-psvc').value.trim();
@@ -1558,13 +1813,25 @@ function recalcInvoiceTotal() {
     sum += qty * price;
   });
   totalEl.textContent = '$' + sum.toFixed(2);
+  const depositInput = document.getElementById('f-iv-deposit');
+  const balanceEl = document.getElementById('f-inv-balance');
+  if (depositInput && balanceEl) {
+    const deposit = parseFloat(depositInput.value) || 0;
+    balanceEl.textContent = '$' + Math.max(0, sum - deposit).toFixed(2);
+  }
 }
-function invoiceFormHTML(inv) {
-  inv = inv || { clientId: '', date: todayStr(), status: 'unpaid', items: [{ desc: '', qty: 1, price: '' }], notes: '' };
+function invoiceFormHTML(inv, presets) {
+  inv = inv || { clientId: (presets && presets.clientId) || '', date: (presets && presets.date) || todayStr(), status: 'unpaid', items: [{ desc: (presets && presets.service) || '', qty: 1, price: '' }], notes: '', depositPaid: 0 };
   const clientOptions = DATA.clients.map(c => `<option value="${c.id}" ${inv.clientId === c.id ? 'selected' : ''}>${escapeHTML(c.name)}</option>`).join('');
   return `
     <div class="dtl-field-row">
-      <div class="dtl-field"><label>Client</label><select id="f-iv-client"><option value="">— Select client —</option>${clientOptions}</select></div>
+      <div class="dtl-field">
+        <label style="display:flex; align-items:center; justify-content:space-between;">
+          <span>Client</span>
+          <button type="button" class="dtl-add-line" id="f-iv-newclient" style="padding:0;">+ New Client</button>
+        </label>
+        <select id="f-iv-client"><option value="">— Select client —</option>${clientOptions}</select>
+      </div>
       <div class="dtl-field"><label>Date</label><input type="date" id="f-iv-date" value="${inv.date}"></div>
     </div>
     <div class="dtl-field"><label>Line Items</label>
@@ -1572,19 +1839,29 @@ function invoiceFormHTML(inv) {
       <button type="button" class="dtl-add-line" id="f-add-lineitem">+ Add line item</button>
     </div>
     <div class="dtl-invoice-total-line"><span class="lbl">Total</span><span class="amt" id="f-inv-total">$0.00</span></div>
-    <div class="dtl-field"><label>Status</label><select id="f-iv-status"><option value="unpaid" ${inv.status === 'unpaid' ? 'selected' : ''}>Unpaid</option><option value="paid" ${inv.status === 'paid' ? 'selected' : ''}>Paid</option></select></div>
+    <div class="dtl-field-row">
+      <div class="dtl-field"><label>Deposit / Amount Paid ($)</label><input type="number" id="f-iv-deposit" value="${inv.depositPaid || 0}" min="0" step="0.01"></div>
+      <div class="dtl-field"><label>Status</label>
+        <select id="f-iv-status">
+          <option value="uncompleted" ${inv.status === 'uncompleted' ? 'selected' : ''}>Uncompleted</option>
+          <option value="unpaid" ${inv.status === 'unpaid' ? 'selected' : ''}>Unpaid</option>
+          <option value="paid" ${inv.status === 'paid' ? 'selected' : ''}>Paid</option>
+        </select>
+      </div>
+    </div>
+    <div class="dtl-invoice-total-line"><span class="lbl">Balance Due</span><span class="amt" id="f-inv-balance" style="color:var(--danger);">$0.00</span></div>
     <div class="dtl-field"><label>Notes</label><textarea id="f-iv-notes">${escapeHTML(inv.notes)}</textarea></div>
   `;
 }
-function openInvoiceModal(invoiceId) {
+function openInvoiceModal(invoiceId, presets) {
   const existing = invoiceId ? DATA.invoices.find(i => i.id === invoiceId) : null;
-  const items = existing ? existing.items : [{ desc: '', qty: 1, price: '' }];
+  const items = existing ? existing.items : [{ desc: (presets && presets.service) || '', qty: 1, price: '' }];
   openModal({
     title: existing ? `Edit ${existing.number}` : 'New Invoice',
     subtitle: existing ? escapeHTML(existing.clientName) : 'Bill a client for completed work',
     icon: ICONS.invoices,
     variant: 'invoice',
-    bodyHTML: invoiceFormHTML(existing),
+    bodyHTML: invoiceFormHTML(existing, presets),
     footHTML: `
       ${existing ? `<button class="dtl-btn dtl-btn-danger" id="dtl-del-invoice">${ICONS.trash} Delete</button>` : ''}
       <div style="flex:1"></div>
@@ -1599,6 +1876,8 @@ function openInvoiceModal(invoiceId) {
       });
       container.querySelectorAll('.dtl-lineitem-row').forEach(wireLineItemRow);
       recalcInvoiceTotal();
+      const depositInput = document.getElementById('f-iv-deposit');
+      if (depositInput) depositInput.addEventListener('input', recalcInvoiceTotal);
       document.getElementById('f-add-lineitem').addEventListener('click', () => {
         const wrap = document.createElement('div');
         wrap.innerHTML = lineItemRowHTML();
@@ -1608,9 +1887,20 @@ function openInvoiceModal(invoiceId) {
         recalcInvoiceTotal();
       });
       document.getElementById('dtl-cancel').onclick = closeModal;
+      document.getElementById('f-iv-newclient').addEventListener('click', () => {
+        const capturedDate = document.getElementById('f-iv-date').value || todayStr();
+        openClientModal(null, (newClient) => {
+          if (newClient) {
+            toast('Client added');
+            openInvoiceModal(existing ? existing.id : null, { clientId: newClient.id, date: capturedDate });
+          } else {
+            openInvoiceModal(existing ? existing.id : null, { date: capturedDate });
+          }
+        });
+      });
       if (existing) document.getElementById('dtl-del-invoice').onclick = async () => {
         DATA.invoices = DATA.invoices.filter(i => i.id !== existing.id);
-        await persist('invoices'); closeModal(); toast('Invoice deleted'); renderAll();
+        await persist('invoices'); closeModal(); toast('Invoice deleted', undoDelete('invoices', existing)); renderAll();
       };
       document.getElementById('dtl-save-invoice').onclick = async () => {
         const clientId = document.getElementById('f-iv-client').value;
@@ -1636,14 +1926,249 @@ function openInvoiceModal(invoiceId) {
           date: document.getElementById('f-iv-date').value || todayStr(),
           status: document.getElementById('f-iv-status').value,
           items: lineItems,
+          depositPaid: Math.max(0, parseFloat(document.getElementById('f-iv-deposit').value) || 0),
           notes: document.getElementById('f-iv-notes').value.trim(),
         };
         if (existing) { DATA.invoices = DATA.invoices.map(i => i.id === existing.id ? obj : i); }
         else { DATA.invoices.push(obj); }
-        await persist('invoices'); closeModal(); toast(existing ? 'Invoice updated' : 'Invoice created'); renderAll();
+        await persist('invoices');
+        if (!existing) {
+          const newEvent = {
+            id: uid(),
+            date: obj.date,
+            time: '09:00',
+            clientId: obj.clientId,
+            clientName: obj.clientName,
+            service: lineItems.map(it => it.desc).join(' + '),
+            status: 'scheduled',
+            notes: `Auto-created from invoice ${obj.number}`,
+          };
+          DATA.events.push(newEvent);
+          await persist('events');
+        }
+        closeModal();
+        toast(existing ? 'Invoice updated' : 'Invoice created — appointment added to calendar');
+        renderAll();
       };
     },
   });
+}
+
+/* ============================ BUY LIST ============================ */
+function renderBuyList() {
+  document.getElementById('dtl-header-action').innerHTML = `<button class="dtl-btn dtl-btn-primary dtl-btn-accent-buylist" id="dtl-add-buyitem">${ICONS.plus} Add Item</button>`;
+  const reorderItems = DATA.inventory.filter(isLowStock);
+  const reorderRows = reorderItems.length ? reorderItems.map(i => {
+    const effective = i.qty + (i.inLaundry || 0);
+    return `
+    <div class="dtl-buylist-row reorder">
+      <div class="bl-info">
+        <div class="bl-name">${escapeHTML(i.name)}</div>
+        <div class="bl-meta">${effective} ${escapeHTML(i.unit)} on hand${i.inLaundry ? ` (${i.inLaundry} in laundry)` : ''} &middot; min ${i.lowThreshold} &middot; ${INV_CATEGORY_LABELS[i.category] || i.category}</div>
+      </div>
+    </div>`;
+  }).join('') : `<div class="dtl-empty">Nothing is running low right now.</div>`;
+
+  const wishlist = DATA.buylist.filter(b => !b.purchased);
+  const wishlistRows = wishlist.length ? wishlist.map(b => `
+    <div class="dtl-buylist-row" data-buyitem-id="${b.id}">
+      <div class="bl-info">
+        <div class="bl-name">${escapeHTML(b.name)}</div>
+        ${b.notes ? `<div class="bl-meta">${escapeHTML(b.notes)}</div>` : ''}
+      </div>
+      <button class="dtl-btn dtl-btn-sm" data-buy-purchased="${b.id}">${ICONS.check} Bought</button>
+      <button class="dtl-icon-btn" data-buy-delete="${b.id}">&times;</button>
+    </div>`).join('') : `<div class="dtl-empty">Nothing on your wishlist yet.</div>`;
+
+  return `
+    <div class="dtl-panel">
+      <div class="dtl-panel-title">Reorder Soon <span class="count">${reorderItems.length}</span></div>
+      <div class="dtl-row-list">${reorderRows}</div>
+    </div>
+    <div class="dtl-panel">
+      <div class="dtl-panel-title">Wishlist <span class="count">${wishlist.length}</span></div>
+      <div class="dtl-row-list">${wishlistRows}</div>
+    </div>`;
+}
+function openBuyItemModal() {
+  openModal({
+    title: 'Add to Buy List',
+    subtitle: 'Something to pick up later',
+    icon: ICONS.buylist,
+    variant: 'buylist',
+    bodyHTML: `
+      <div class="dtl-field"><label>Item</label><input id="f-bl-name" placeholder="New polisher pads"></div>
+      <div class="dtl-field"><label>Notes</label><textarea id="f-bl-notes" placeholder="Size, brand, where to get it..."></textarea></div>
+    `,
+    footHTML: `<div style="flex:1"></div><button class="dtl-btn dtl-btn-ghost" id="dtl-cancel">Cancel</button><button class="dtl-btn dtl-btn-primary" id="dtl-save-buyitem">Add to List</button>`,
+    onMount: () => {
+      document.getElementById('dtl-cancel').onclick = closeModal;
+      document.getElementById('dtl-save-buyitem').onclick = async () => {
+        const name = document.getElementById('f-bl-name').value.trim();
+        if (!name) { toast('Item name is required'); return; }
+        DATA.buylist.push({ id: uid(), name, notes: document.getElementById('f-bl-notes').value.trim(), addedAt: todayStr(), purchased: false });
+        await persist('buylist'); closeModal(); toast('Added to buy list'); renderAll();
+      };
+    },
+  });
+}
+
+/* ============================ CALL / TEXT ============================ */
+function renderCallText() {
+  document.getElementById('dtl-header-action').innerHTML = `<button class="dtl-btn dtl-btn-primary dtl-btn-accent-calltext" id="dtl-add-followup">${ICONS.plus} Add</button>`;
+  let list = DATA.followups;
+  if (CALLTEXT_FILTER === 'pending') list = list.filter(f => !f.done);
+  else if (CALLTEXT_FILTER === 'done') list = list.filter(f => f.done);
+  list = [...list].sort((a, b) => (a.done === b.done) ? 0 : (a.done ? 1 : -1));
+
+  const rows = list.length ? list.map(f => {
+    const telHref = f.phone ? `tel:${f.phone.replace(/[^0-9+]/g, '')}` : null;
+    const smsHref = f.phone ? `sms:${f.phone.replace(/[^0-9+]/g, '')}` : null;
+    return `
+    <div class="dtl-calltext-row ${f.done ? 'done' : ''}">
+      <div class="ct-info" data-followup-id="${f.id}">
+        <div class="ct-name">${escapeHTML(f.name)}${f.phone ? ` &middot; ${escapeHTML(f.phone)}` : ''}</div>
+        ${f.reason ? `<div class="ct-reason">${escapeHTML(f.reason)}</div>` : ''}
+      </div>
+      <div class="dtl-calltext-actions">
+        ${telHref ? `<a class="dtl-ct-iconbtn call" href="${telHref}" title="Call">${ICONS.phone}</a>` : ''}
+        ${smsHref ? `<a class="dtl-ct-iconbtn text" href="${smsHref}" title="Text">${ICONS.texticon}</a>` : ''}
+        <button class="dtl-ct-iconbtn done-toggle" data-followup-toggle="${f.id}" title="${f.done ? 'Mark pending' : 'Mark done'}">${ICONS.check}</button>
+      </div>
+    </div>`;
+  }).join('') : `<div class="dtl-empty">Nothing here.</div>`;
+
+  return `
+    <div class="dtl-toolbar">
+      <div class="dtl-tabs">
+        <div class="dtl-tab ${CALLTEXT_FILTER === 'pending' ? 'active' : ''}" data-cttab="pending">Pending</div>
+        <div class="dtl-tab ${CALLTEXT_FILTER === 'done' ? 'active' : ''}" data-cttab="done">Done</div>
+        <div class="dtl-tab ${CALLTEXT_FILTER === 'all' ? 'active' : ''}" data-cttab="all">All</div>
+      </div>
+      <div style="color:var(--text-faint); font-size:12.5px;">${DATA.followups.filter(f => !f.done).length} pending</div>
+    </div>
+    <div class="dtl-row-list">${rows}</div>`;
+}
+function followupFormHTML(f) {
+  f = f || { name: '', phone: '', clientId: '', type: 'call', reason: '' };
+  const clientOptions = DATA.clients.map(c => `<option value="${c.id}" data-phone="${escapeHTML(c.phone || '')}" ${f.clientId === c.id ? 'selected' : ''}>${escapeHTML(c.name)}</option>`).join('');
+  return `
+    <div class="dtl-field"><label>Existing Client (optional)</label><select id="f-ct-client"><option value="">— None / type manually —</option>${clientOptions}</select></div>
+    <div class="dtl-field-row">
+      <div class="dtl-field"><label>Name</label><input id="f-ct-name" value="${escapeHTML(f.name)}" placeholder="Name"></div>
+      <div class="dtl-field"><label>Phone</label><input id="f-ct-phone" value="${escapeHTML(f.phone)}" placeholder="(555) 000-0000"></div>
+    </div>
+    <div class="dtl-field"><label>Reason</label><input id="f-ct-reason" value="${escapeHTML(f.reason)}" placeholder="Confirm appointment, follow up on quote..."></div>
+  `;
+}
+function openFollowupModal(followupId) {
+  const existing = followupId ? DATA.followups.find(f => f.id === followupId) : null;
+  openModal({
+    title: existing ? 'Edit Follow-up' : 'Add Follow-up',
+    subtitle: 'Someone to call or text',
+    icon: ICONS.calltext,
+    variant: 'calltext',
+    bodyHTML: followupFormHTML(existing),
+    footHTML: `
+      ${existing ? `<button class="dtl-btn dtl-btn-danger" id="dtl-del-followup">${ICONS.trash} Delete</button>` : ''}
+      <div style="flex:1"></div>
+      <button class="dtl-btn dtl-btn-ghost" id="dtl-cancel">Cancel</button>
+      <button class="dtl-btn dtl-btn-primary" id="dtl-save-followup">${existing ? 'Save Changes' : 'Add'}</button>`,
+    onMount: () => {
+      const clientSel = document.getElementById('f-ct-client');
+      clientSel.addEventListener('change', () => {
+        const opt = clientSel.selectedOptions[0];
+        if (opt && opt.value) {
+          document.getElementById('f-ct-name').value = opt.textContent;
+          document.getElementById('f-ct-phone').value = opt.dataset.phone || '';
+        }
+      });
+      document.getElementById('dtl-cancel').onclick = closeModal;
+      if (existing) document.getElementById('dtl-del-followup').onclick = async () => {
+        DATA.followups = DATA.followups.filter(f => f.id !== existing.id);
+        await persist('followups'); closeModal(); toast('Follow-up deleted', undoDelete('followups', existing)); renderAll();
+      };
+      document.getElementById('dtl-save-followup').onclick = async () => {
+        const name = document.getElementById('f-ct-name').value.trim();
+        if (!name) { toast('Name is required'); return; }
+        const obj = {
+          id: existing ? existing.id : uid(),
+          name,
+          phone: document.getElementById('f-ct-phone').value.trim(),
+          clientId: clientSel.value || (existing ? existing.clientId : ''),
+          reason: document.getElementById('f-ct-reason').value.trim(),
+          done: existing ? existing.done : false,
+          createdAt: existing ? existing.createdAt : todayStr(),
+        };
+        if (existing) { DATA.followups = DATA.followups.map(f => f.id === existing.id ? obj : f); }
+        else { DATA.followups.push(obj); }
+        await persist('followups'); closeModal(); toast(existing ? 'Follow-up updated' : 'Added to your list'); renderAll();
+      };
+    },
+  });
+}
+
+/* ============================ REPORTS ============================ */
+function renderReports() {
+  document.getElementById('dtl-header-action').innerHTML = '';
+  const paidInvoices = DATA.invoices.filter(i => i.status === 'paid');
+
+  // Revenue by month, last 6 months
+  const months = [];
+  const now = new Date();
+  for (let i = 5; i >= 0; i--) {
+    const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+    months.push({ key: `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`, label: d.toLocaleDateString(undefined, { month: 'short' }) });
+  }
+  const monthTotals = months.map(m => ({
+    ...m,
+    total: paidInvoices.filter(inv => (inv.date || '').slice(0, 7) === m.key).reduce((sum, inv) => sum + invoiceTotal(inv), 0),
+  }));
+  const maxMonth = Math.max(1, ...monthTotals.map(m => m.total));
+  const revenueBars = monthTotals.map(m => `
+    <div class="dtl-report-row">
+      <div class="dtl-report-label">${m.label}</div>
+      <div class="dtl-report-track"><div class="dtl-report-fill" style="width:${(m.total / maxMonth) * 100}%"></div></div>
+      <div class="dtl-report-value">$${m.total.toFixed(0)}</div>
+    </div>`).join('');
+
+  // Top clients by paid spend
+  const spendByClient = {};
+  paidInvoices.forEach(inv => { spendByClient[inv.clientName] = (spendByClient[inv.clientName] || 0) + invoiceTotal(inv); });
+  const topClients = Object.entries(spendByClient).sort((a, b) => b[1] - a[1]).slice(0, 5);
+  const topClientRows = topClients.length ? topClients.map(([name, total], idx) => `
+    <div class="dtl-report-rank-row">
+      <div class="dtl-report-rank-num">${idx + 1}</div>
+      <div class="dtl-report-rank-name">${escapeHTML(name)}</div>
+      <div class="dtl-report-rank-value">$${total.toFixed(0)}</div>
+    </div>`).join('') : `<div class="dtl-empty">No paid invoices yet.</div>`;
+
+  // Most-booked services from calendar events
+  const serviceCounts = {};
+  DATA.events.forEach(e => { if (e.service) serviceCounts[e.service] = (serviceCounts[e.service] || 0) + 1; });
+  const topServices = Object.entries(serviceCounts).sort((a, b) => b[1] - a[1]).slice(0, 5);
+  const topServiceRows = topServices.length ? topServices.map(([name, count], idx) => `
+    <div class="dtl-report-rank-row">
+      <div class="dtl-report-rank-num">${idx + 1}</div>
+      <div class="dtl-report-rank-name">${escapeHTML(name)}</div>
+      <div class="dtl-report-rank-value">${count} job${count === 1 ? '' : 's'}</div>
+    </div>`).join('') : `<div class="dtl-empty">No appointments booked yet.</div>`;
+
+  return `
+    <div class="dtl-panel">
+      <div class="dtl-panel-title">Revenue — Last 6 Months <span class="count">Paid invoices only</span></div>
+      ${revenueBars}
+    </div>
+    <div class="dtl-two-col">
+      <div class="dtl-panel">
+        <div class="dtl-panel-title">Top Clients by Spend</div>
+        ${topClientRows}
+      </div>
+      <div class="dtl-panel">
+        <div class="dtl-panel-title">Most Booked Services</div>
+        ${topServiceRows}
+      </div>
+    </div>`;
 }
 
 /* ============================ ROUTER / RENDER ============================ */
@@ -1658,6 +2183,9 @@ function renderAll() {
   else if (VIEW === 'calendar') html = renderCalendar();
   else if (VIEW === 'process') html = renderProcess();
   else if (VIEW === 'invoices') html = renderInvoicesView();
+  else if (VIEW === 'buylist') html = renderBuyList();
+  else if (VIEW === 'calltext') html = renderCallText();
+  else if (VIEW === 'reports') html = renderReports();
   viewRoot.innerHTML = html;
   wireViewEvents();
 }
@@ -1680,7 +2208,7 @@ function wireViewEvents() {
   if (addItemBtn) addItemBtn.addEventListener('click', () => openItemModal(null));
   document.querySelectorAll('[data-filter]').forEach(t => t.addEventListener('click', () => { INV_FILTER = t.dataset.filter; renderAll(); }));
   document.querySelectorAll('[data-item-id]').forEach(card => card.addEventListener('click', (e) => {
-    if (e.target.closest('[data-restock]') || e.target.closest('[data-use]')) return;
+    if (e.target.closest('[data-restock]') || e.target.closest('[data-use]') || e.target.closest('[data-tolaundry]') || e.target.closest('[data-fromlaundry]')) return;
     openItemModal(card.dataset.itemId);
   }));
   document.querySelectorAll('[data-restock]').forEach(b => b.addEventListener('click', async (e) => {
@@ -1692,6 +2220,22 @@ function wireViewEvents() {
     e.stopPropagation();
     const item = DATA.inventory.find(i => i.id === b.dataset.use);
     if (item) { item.qty = Math.max(0, item.qty - 1); await persist('inventory'); renderAll(); }
+  }));
+  document.querySelectorAll('[data-tolaundry]').forEach(b => b.addEventListener('click', async (e) => {
+    e.stopPropagation();
+    const item = DATA.inventory.find(i => i.id === b.dataset.tolaundry);
+    if (item && item.qty > 0) {
+      item.qty -= 1; item.inLaundry = (item.inLaundry || 0) + 1;
+      await persist('inventory'); toast(`${item.name} sent to laundry`); renderAll();
+    }
+  }));
+  document.querySelectorAll('[data-fromlaundry]').forEach(b => b.addEventListener('click', async (e) => {
+    e.stopPropagation();
+    const item = DATA.inventory.find(i => i.id === b.dataset.fromlaundry);
+    if (item && (item.inLaundry || 0) > 0) {
+      item.inLaundry -= 1; item.qty += 1;
+      await persist('inventory'); toast(`${item.name} returned from laundry`); renderAll();
+    }
   }));
 
   // calendar
@@ -1713,20 +2257,22 @@ function wireViewEvents() {
   if (backBtn) backBtn.addEventListener('click', () => { ACTIVE_GUIDE_ID = null; renderAll(); });
   const delGuideBtn = document.getElementById('dtl-del-guide');
   if (delGuideBtn) delGuideBtn.addEventListener('click', async () => {
+    const removed = DATA.guides.find(g => g.id === ACTIVE_GUIDE_ID);
     DATA.guides = DATA.guides.filter(g => g.id !== ACTIVE_GUIDE_ID);
     delete GUIDE_PROGRESS[ACTIVE_GUIDE_ID];
     ACTIVE_GUIDE_ID = null;
-    await persist('guides'); toast('Guide deleted'); renderAll();
+    await persist('guides'); toast('Guide deleted', removed ? undoDelete('guides', removed) : null); renderAll();
   });
   document.querySelectorAll('[data-step-idx]').forEach(step => step.addEventListener('click', () => {
     const gid = ACTIVE_GUIDE_ID;
     const idx = parseInt(step.dataset.stepIdx, 10);
     if (!GUIDE_PROGRESS[gid]) GUIDE_PROGRESS[gid] = new Set();
     if (GUIDE_PROGRESS[gid].has(idx)) GUIDE_PROGRESS[gid].delete(idx); else GUIDE_PROGRESS[gid].add(idx);
+    maybeAutoDeduct(gid);
     renderAll();
   }));
   const resetBtn = document.getElementById('dtl-reset-progress');
-  if (resetBtn) resetBtn.addEventListener('click', () => { GUIDE_PROGRESS[ACTIVE_GUIDE_ID] = new Set(); renderAll(); });
+  if (resetBtn) resetBtn.addEventListener('click', () => { GUIDE_PROGRESS[ACTIVE_GUIDE_ID] = new Set(); GUIDE_DEDUCTED.delete(ACTIVE_GUIDE_ID); renderAll(); });
 
   // invoices & pricing
   document.querySelectorAll('[data-invtab]').forEach(t => t.addEventListener('click', () => { INVOICE_TAB = t.dataset.invtab; renderAll(); }));
@@ -1736,6 +2282,39 @@ function wireViewEvents() {
   if (addPriceBtn) addPriceBtn.addEventListener('click', () => openPriceModal(null));
   document.querySelectorAll('[data-invoice-id]').forEach(row => row.addEventListener('click', () => openInvoiceModal(row.dataset.invoiceId)));
   document.querySelectorAll('[data-price-id]').forEach(row => row.addEventListener('click', () => openPriceModal(row.dataset.priceId)));
+
+  // buy list
+  const addBuyItemBtn = document.getElementById('dtl-add-buyitem');
+  if (addBuyItemBtn) addBuyItemBtn.addEventListener('click', openBuyItemModal);
+  document.querySelectorAll('[data-buy-purchased]').forEach(b => b.addEventListener('click', async () => {
+    const item = DATA.buylist.find(x => x.id === b.dataset.buyPurchased);
+    if (item) {
+      DATA.buylist = DATA.buylist.filter(x => x.id !== item.id);
+      await persist('buylist');
+      toast('Marked purchased', undoDelete('buylist', item));
+      renderAll();
+    }
+  }));
+  document.querySelectorAll('[data-buy-delete]').forEach(b => b.addEventListener('click', async () => {
+    const item = DATA.buylist.find(x => x.id === b.dataset.buyDelete);
+    if (item) {
+      DATA.buylist = DATA.buylist.filter(x => x.id !== item.id);
+      await persist('buylist');
+      toast('Removed', undoDelete('buylist', item));
+      renderAll();
+    }
+  }));
+
+  // call / text
+  document.querySelectorAll('[data-cttab]').forEach(t => t.addEventListener('click', () => { CALLTEXT_FILTER = t.dataset.cttab; renderAll(); }));
+  const addFollowupBtn = document.getElementById('dtl-add-followup');
+  if (addFollowupBtn) addFollowupBtn.addEventListener('click', () => openFollowupModal(null));
+  document.querySelectorAll('[data-followup-id]').forEach(el => el.addEventListener('click', () => openFollowupModal(el.dataset.followupId)));
+  document.querySelectorAll('[data-followup-toggle]').forEach(b => b.addEventListener('click', async (e) => {
+    e.stopPropagation();
+    const item = DATA.followups.find(f => f.id === b.dataset.followupToggle);
+    if (item) { item.done = !item.done; await persist('followups'); renderAll(); }
+  }));
 }
 
 /* ============================ AUTH ============================ */
@@ -1801,7 +2380,7 @@ async function handleAuthSubmit() {
 async function handleLogout() {
   try { await supabase.auth.signOut(); } catch (e) {}
   CURRENT_USER = null;
-  DATA = { clients: [], inventory: [], events: [], guides: [], pricing: [], invoices: [] };
+  DATA = { clients: [], inventory: [], events: [], guides: [], pricing: [], invoices: [], buylist: [], followups: [] };
   showAuthGate();
 }
 async function startApp() {
@@ -1831,7 +2410,7 @@ async function importBackupFile(file) {
     const text = await file.text();
     const parsed = JSON.parse(text);
     const incoming = parsed.data || parsed; // allow raw DATA object too
-    const keys = ['clients', 'inventory', 'events', 'guides', 'pricing', 'invoices'];
+    const keys = ['clients', 'inventory', 'events', 'guides', 'pricing', 'invoices', 'buylist', 'followups'];
     let restored = 0;
     for (const key of keys) {
       if (Array.isArray(incoming[key])) { DATA[key] = incoming[key]; await persist(key); restored++; }
