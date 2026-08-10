@@ -451,6 +451,9 @@
 .dtl-ct-iconbtn.call:hover { color: var(--success); border-color: rgba(76,175,109,0.4); }
 .dtl-ct-iconbtn.text:hover { color: var(--cyan); border-color: rgba(95,212,224,0.4); }
 .dtl-ct-iconbtn.done-toggle:hover { color: var(--accent); border-color: rgba(232,163,61,0.4); }
+.dtl-ct-outcome { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
+.dtl-ct-outcome-label { font-size: 11.5px; color: var(--text-faint); font-weight: 600; }
+.dtl-ct-outcome-notes { font-size: 11.5px; color: var(--text-dim); font-style: italic; }
 
 /* ---------- REPORTS ---------- */
 .dtl-report-row { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
@@ -2024,11 +2027,25 @@ function renderCallText() {
   const rows = list.length ? list.map(f => {
     const telHref = f.phone ? `tel:${f.phone.replace(/[^0-9+]/g, '')}` : null;
     const smsHref = f.phone ? `sms:${f.phone.replace(/[^0-9+]/g, '')}` : null;
+    const outcomeBlock = f.done ? `
+      <div class="dtl-ct-outcome">
+        ${f.contacted === undefined || f.contacted === null ? `
+          <span class="dtl-ct-outcome-label">Got in touch?</span>
+          <button class="dtl-btn dtl-btn-sm" data-log-contacted="${f.id}:true">Yes</button>
+          <button class="dtl-btn dtl-btn-sm dtl-btn-ghost" data-log-contacted="${f.id}:false">No</button>
+        ` : `
+          <span class="dtl-pill ${f.contacted ? 'done' : 'canceled'}">${f.contacted ? 'Contacted' : 'No response'}</span>
+          ${f.contacted ? `<span class="dtl-pill ${f.gotJob === 'yes' || f.gotJob === true ? 'done' : (f.gotJob === 'no' || f.gotJob === false ? 'canceled' : '')}">${f.gotJob === 'yes' || f.gotJob === true ? 'Got the job' : (f.gotJob === 'no' || f.gotJob === false ? 'No job' : 'Undetermined')}</span>` : ''}
+          ${f.outcomeNotes ? `<span class="dtl-ct-outcome-notes">${escapeHTML(f.outcomeNotes)}</span>` : ''}
+          <button class="dtl-btn dtl-btn-sm dtl-btn-ghost" data-log-outcome="${f.id}">Edit</button>
+        `}
+      </div>` : '';
     return `
     <div class="dtl-calltext-row ${f.done ? 'done' : ''}">
       <div class="ct-info" data-followup-id="${f.id}">
         <div class="ct-name">${escapeHTML(f.name)}${f.phone ? ` &middot; ${escapeHTML(f.phone)}` : ''}</div>
         ${f.reason ? `<div class="ct-reason">${escapeHTML(f.reason)}</div>` : ''}
+        ${outcomeBlock}
       </div>
       <div class="dtl-calltext-actions">
         ${telHref ? `<a class="dtl-ct-iconbtn call" href="${telHref}" title="Call">${ICONS.phone}</a>` : ''}
@@ -2103,6 +2120,48 @@ function openFollowupModal(followupId) {
         if (existing) { DATA.followups = DATA.followups.map(f => f.id === existing.id ? obj : f); }
         else { DATA.followups.push(obj); }
         await persist('followups'); closeModal(); toast(existing ? 'Follow-up updated' : 'Added to your list'); renderAll();
+      };
+    },
+  });
+}
+
+function openOutcomeModal(followupId, presetContacted) {
+  const f = DATA.followups.find(x => x.id === followupId);
+  if (!f) return;
+  const contacted = presetContacted !== undefined ? presetContacted : f.contacted;
+  openModal({
+    title: 'Log Outcome',
+    subtitle: escapeHTML(f.name),
+    icon: ICONS.calltext,
+    variant: 'calltext',
+    bodyHTML: `
+      <div class="dtl-field"><label>Got in touch with them?</label>
+        <select id="f-out-contacted">
+          <option value="true" ${contacted === true ? 'selected' : ''}>Yes</option>
+          <option value="false" ${contacted === false ? 'selected' : ''}>No</option>
+        </select>
+      </div>
+      <div class="dtl-field" id="f-out-gotjob-wrap"><label>Did you get the job?</label>
+        <select id="f-out-gotjob">
+          <option value="yes" ${f.gotJob === 'yes' || f.gotJob === true ? 'selected' : ''}>Yes</option>
+          <option value="no" ${f.gotJob === 'no' || f.gotJob === false ? 'selected' : ''}>No</option>
+          <option value="undetermined" ${f.gotJob !== 'yes' && f.gotJob !== true && f.gotJob !== 'no' && f.gotJob !== false ? 'selected' : ''}>Undetermined</option>
+        </select>
+      </div>
+      <div class="dtl-field"><label>Notes</label><textarea id="f-out-notes" placeholder="What happened, what they said, next steps...">${escapeHTML(f.outcomeNotes || '')}</textarea></div>
+    `,
+    footHTML: `<div style="flex:1"></div><button class="dtl-btn dtl-btn-ghost" id="dtl-cancel">Cancel</button><button class="dtl-btn dtl-btn-primary" id="dtl-save-outcome">Save</button>`,
+    onMount: () => {
+      const contactedSel = document.getElementById('f-out-contacted');
+      const gotJobWrap = document.getElementById('f-out-gotjob-wrap');
+      const syncGotJob = () => { gotJobWrap.style.display = contactedSel.value === 'true' ? 'block' : 'none'; };
+      contactedSel.addEventListener('change', syncGotJob); syncGotJob();
+      document.getElementById('dtl-cancel').onclick = closeModal;
+      document.getElementById('dtl-save-outcome').onclick = async () => {
+        f.contacted = contactedSel.value === 'true';
+        f.gotJob = f.contacted ? document.getElementById('f-out-gotjob').value : 'undetermined';
+        f.outcomeNotes = document.getElementById('f-out-notes').value.trim();
+        await persist('followups'); closeModal(); toast('Outcome saved'); renderAll();
       };
     },
   });
@@ -2309,7 +2368,19 @@ function wireViewEvents() {
   document.querySelectorAll('[data-cttab]').forEach(t => t.addEventListener('click', () => { CALLTEXT_FILTER = t.dataset.cttab; renderAll(); }));
   const addFollowupBtn = document.getElementById('dtl-add-followup');
   if (addFollowupBtn) addFollowupBtn.addEventListener('click', () => openFollowupModal(null));
-  document.querySelectorAll('[data-followup-id]').forEach(el => el.addEventListener('click', () => openFollowupModal(el.dataset.followupId)));
+  document.querySelectorAll('[data-followup-id]').forEach(el => el.addEventListener('click', (e) => {
+    if (e.target.closest('[data-log-contacted]') || e.target.closest('[data-log-outcome]')) return;
+    openFollowupModal(el.dataset.followupId);
+  }));
+  document.querySelectorAll('[data-log-contacted]').forEach(b => b.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const [id, val] = b.dataset.logContacted.split(':');
+    openOutcomeModal(id, val === 'true');
+  }));
+  document.querySelectorAll('[data-log-outcome]').forEach(b => b.addEventListener('click', (e) => {
+    e.stopPropagation();
+    openOutcomeModal(b.dataset.logOutcome);
+  }));
   document.querySelectorAll('[data-followup-toggle]').forEach(b => b.addEventListener('click', async (e) => {
     e.stopPropagation();
     const item = DATA.followups.find(f => f.id === b.dataset.followupToggle);
