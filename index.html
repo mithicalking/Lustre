@@ -12,6 +12,8 @@
   html, body { margin:0; padding:0; background:#14161a; }
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 </head>
 <body>
 <style>
@@ -43,6 +45,8 @@
   --lime-soft: #26301c;
   --coral: #ff8b73;
   --coral-soft: #33231d;
+  --indigo: #8c9eff;
+  --indigo-soft: #232640;
   --radius: 10px;
   --font-display: 'Oswald', sans-serif;
   --font-body: 'Inter', sans-serif;
@@ -591,6 +595,13 @@
 .dtl-modal.variant-calltext .dtl-btn-primary:hover { background: #ffab98; border-color: #ffab98; }
 .dtl-modal.variant-calltext .dtl-field input:focus, .dtl-modal.variant-calltext .dtl-field select:focus, .dtl-modal.variant-calltext .dtl-field textarea:focus { border-color: var(--coral); }
 
+.dtl-modal.variant-doorknock { border-top-color: var(--indigo); }
+.dtl-modal.variant-doorknock .dtl-modal-head { background: linear-gradient(135deg, rgba(140,158,255,0.12), transparent 60%); }
+.dtl-modal.variant-doorknock .dtl-modal-icon { background: var(--indigo-soft); color: var(--indigo); }
+.dtl-modal.variant-doorknock .dtl-btn-primary { background: var(--indigo); border-color: var(--indigo); color: #12142b; }
+.dtl-modal.variant-doorknock .dtl-btn-primary:hover { background: #adb8ff; border-color: #adb8ff; }
+.dtl-modal.variant-doorknock .dtl-field input:focus, .dtl-modal.variant-doorknock .dtl-field select:focus, .dtl-modal.variant-doorknock .dtl-field textarea:focus { border-color: var(--indigo); }
+
 /* header "top right" action button — colored per page */
 .dtl-btn-accent-client { background: var(--accent-2); border-color: var(--accent-2); color: #0c2430; }
 .dtl-btn-accent-client:hover { background: #6ac6e8; border-color: #6ac6e8; }
@@ -608,6 +619,16 @@
 .dtl-btn-accent-buylist:hover { background: #b8e37e; border-color: #b8e37e; }
 .dtl-btn-accent-calltext { background: var(--coral); border-color: var(--coral); color: #2b0f08; }
 .dtl-btn-accent-calltext:hover { background: #ffab98; border-color: #ffab98; }
+.dtl-btn-accent-doorknock { background: var(--indigo); border-color: var(--indigo); color: #12142b; }
+.dtl-btn-accent-doorknock:hover { background: #adb8ff; border-color: #adb8ff; }
+
+/* ---------- DOOR KNOCKING MAP ---------- */
+.dtl-map-legend { display: flex; flex-wrap: wrap; gap: 14px; margin: 10px 2px 14px 2px; }
+.dtl-map-legend-item { display: flex; align-items: center; gap: 6px; font-size: 11.5px; color: var(--text-dim); }
+.dtl-map-legend-dot { width: 10px; height: 10px; border-radius: 50%; border: 1.5px solid #14161a; flex-shrink: 0; }
+#dtl-map { width: 100%; height: 62vh; min-height: 380px; border-radius: 10px; }
+#dtl-map .leaflet-popup-content-wrapper { background: var(--bg-elev); color: var(--text); border-radius: 8px; }
+#dtl-map .leaflet-popup-tip { background: var(--bg-elev); }
 
 .dtl-field { margin-bottom: 14px; }
 .dtl-field label { display: block; font-size: 11.5px; text-transform: uppercase; letter-spacing: .05em; color: var(--text-faint); font-weight: 700; margin-bottom: 6px; }
@@ -756,6 +777,7 @@ const ICONS = {
   reports: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 20V10"/><path d="M12 20V4"/><path d="M20 20v-7"/><path d="M3 20h18"/></svg>',
   buylist: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="9" cy="20" r="1.4"/><circle cx="17" cy="20" r="1.4"/><path d="M2 3h2l2.4 12.2a2 2 0 0 0 2 1.6h8.6a2 2 0 0 0 2-1.6L21 7H6"/></svg>',
   calltext: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 5c0 8.8 6.2 15 15 15l2-3.6-5-2-1.5 1.9A11.6 11.6 0 0 1 8.7 9.5L10.6 8 8.6 3 4 5z"/></svg>',
+  doorknock: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 21s7-6.1 7-11.5A7 7 0 0 0 5 9.5C5 14.9 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.4"/></svg>',
   texticon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 11.5a8.38 8.38 0 0 1-4.5 7.4l-5 3.1.4-3.2A8.5 8.5 0 1 1 21 11.5z"/></svg>',
   check: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6L9 17l-5-5"/></svg>',
   warn: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3l10 18H2L12 3z"/><path d="M12 10v4"/><circle cx="12" cy="17" r="0.6" fill="currentColor"/></svg>',
@@ -778,7 +800,7 @@ const supabase = (SUPABASE_URL.startsWith('http') && window.supabase)
   : null;
 
 /* ============================ STATE ============================ */
-let DATA = { clients: [], inventory: [], events: [], guides: [], pricing: [], invoices: [], buylist: [], followups: [] };
+let DATA = { clients: [], inventory: [], events: [], guides: [], pricing: [], invoices: [], buylist: [], followups: [], houses: [] };
 let VIEW = 'dashboard';
 let CAL_DATE = new Date();
 let ACTIVE_GUIDE_ID = null;
@@ -789,6 +811,9 @@ let CLIENT_SEARCH = '';
 let INVOICE_TAB = 'invoices'; // 'invoices' | 'pricing'
 let CURRENT_USER = null;
 let CALLTEXT_FILTER = 'pending'; // 'pending' | 'done' | 'all'
+let DOORKNOCK_MAP = null;
+let DOORKNOCK_CENTER = null; // [lat, lng], remembers pan position across re-renders
+let DOORKNOCK_ZOOM = null;
 
 const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
 const todayStr = () => new Date().toISOString().slice(0, 10);
@@ -915,13 +940,14 @@ function seedData() {
       { id: uid(), name: 'Interior Steam Cleaner (upgrade)', notes: 'Current one is getting weak — compare models', addedAt: todayStr(), purchased: false },
     ],
     followups: [],
+    houses: [],
   };
 }
 
 /* ============================ STORAGE ============================ */
 async function loadData() {
   const seeded = seedData();
-  const keys = ['clients', 'inventory', 'events', 'guides', 'pricing', 'invoices', 'buylist', 'followups'];
+  const keys = ['clients', 'inventory', 'events', 'guides', 'pricing', 'invoices', 'buylist', 'followups', 'houses'];
   let rows = [];
   try {
     const { data, error } = await supabase.from('app_data').select('key, value');
@@ -1045,6 +1071,7 @@ const NAV_ITEMS = [
   { id: 'process', label: 'Process Guides', sub: 'Step-by-step job checklists' },
   { id: 'invoices', label: 'Pricing & Invoices', sub: 'Service rates and billing' },
   { id: 'reports', label: 'Reports', sub: 'Revenue & performance' },
+  { id: 'doorknock', label: 'Door Knocking', sub: 'Log houses on the map' },
 ];
 function renderNav() {
   const nav = document.getElementById('dtl-nav');
@@ -2230,6 +2257,170 @@ function renderReports() {
     </div>`;
 }
 
+/* ============================ DOOR KNOCKING MAP ============================ */
+function houseColor(h) {
+  if (h.status === 'no_soliciting') return '#e2574c';
+  if (h.status === 'no_answer') return '#676d79';
+  if (h.status === 'answered') {
+    if (h.jobSecured === 'yes') return '#4caf6d';
+    if (h.jobSecured === 'no') return '#e8a33d';
+    return '#4fb8e0';
+  }
+  return '#9aa0ac';
+}
+function houseStatusLabel(h) {
+  if (h.status === 'no_soliciting') return 'No Soliciting';
+  if (h.status === 'no_answer') return 'No Answer';
+  if (h.status === 'answered') return 'Answered';
+  return 'Unknown';
+}
+
+function renderDoorKnock() {
+  document.getElementById('dtl-header-action').innerHTML = '';
+  const total = DATA.houses.length;
+  const answered = DATA.houses.filter(h => h.status === 'answered').length;
+  const noAnswer = DATA.houses.filter(h => h.status === 'no_answer').length;
+  const noSoliciting = DATA.houses.filter(h => h.status === 'no_soliciting').length;
+  const secured = DATA.houses.filter(h => h.status === 'answered' && h.jobSecured === 'yes').length;
+
+  if (typeof L === 'undefined') {
+    return `<div class="dtl-empty">The map library didn't load — check your internet connection and refresh the page.</div>`;
+  }
+
+  return `
+    <div class="dtl-kpi-grid">
+      <div class="dtl-kpi"><div class="label">Houses Logged</div><div class="value">${total}</div></div>
+      <div class="dtl-kpi"><div class="label">Answered</div><div class="value accent">${answered}</div></div>
+      <div class="dtl-kpi"><div class="label">No Answer</div><div class="value">${noAnswer}</div></div>
+      <div class="dtl-kpi"><div class="label">No Soliciting</div><div class="value ${noSoliciting ? 'warn' : ''}">${noSoliciting}</div></div>
+      <div class="dtl-kpi"><div class="label">Jobs Secured</div><div class="value" style="color:var(--success);">${secured}</div></div>
+    </div>
+    <div class="dtl-map-legend">
+      <div class="dtl-map-legend-item"><span class="dtl-map-legend-dot" style="background:#4caf6d;"></span>Answered — got the job</div>
+      <div class="dtl-map-legend-item"><span class="dtl-map-legend-dot" style="background:#4fb8e0;"></span>Answered — undetermined</div>
+      <div class="dtl-map-legend-item"><span class="dtl-map-legend-dot" style="background:#e8a33d;"></span>Answered — no job</div>
+      <div class="dtl-map-legend-item"><span class="dtl-map-legend-dot" style="background:#676d79;"></span>No answer</div>
+      <div class="dtl-map-legend-item"><span class="dtl-map-legend-dot" style="background:#e2574c;"></span>No soliciting</div>
+    </div>
+    <div class="dtl-panel" style="padding:8px;">
+      <div id="dtl-map"></div>
+    </div>
+    <div class="dtl-empty" style="text-align:left; padding-top:10px;">Tap anywhere on the map to log a house. Tap an existing pin to view or edit it.</div>`;
+}
+
+function initDoorKnockMap() {
+  const mapEl = document.getElementById('dtl-map');
+  if (!mapEl || typeof L === 'undefined') return;
+  if (DOORKNOCK_MAP) { try { DOORKNOCK_MAP.remove(); } catch (e) {} DOORKNOCK_MAP = null; }
+
+  const hasCenter = !!DOORKNOCK_CENTER;
+  const center = DOORKNOCK_CENTER || [39.8283, -98.5795];
+  const zoom = DOORKNOCK_ZOOM || (hasCenter ? 16 : 4);
+
+  DOORKNOCK_MAP = L.map('dtl-map').setView(center, zoom);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; OpenStreetMap contributors',
+    maxZoom: 19,
+  }).addTo(DOORKNOCK_MAP);
+
+  DOORKNOCK_MAP.on('moveend', () => {
+    const c = DOORKNOCK_MAP.getCenter();
+    DOORKNOCK_CENTER = [c.lat, c.lng];
+    DOORKNOCK_ZOOM = DOORKNOCK_MAP.getZoom();
+  });
+
+  DATA.houses.forEach(addHouseMarker);
+
+  DOORKNOCK_MAP.on('click', (e) => {
+    openHouseModal(null, { lat: e.latlng.lat, lng: e.latlng.lng });
+  });
+
+  if (!hasCenter && navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition((pos) => {
+      DOORKNOCK_CENTER = [pos.coords.latitude, pos.coords.longitude];
+      DOORKNOCK_ZOOM = 16;
+      if (DOORKNOCK_MAP) DOORKNOCK_MAP.setView(DOORKNOCK_CENTER, DOORKNOCK_ZOOM);
+    }, () => {}, { timeout: 6000 });
+  }
+
+  setTimeout(() => { if (DOORKNOCK_MAP) DOORKNOCK_MAP.invalidateSize(); }, 150);
+}
+
+function addHouseMarker(h) {
+  if (!DOORKNOCK_MAP) return;
+  const marker = L.circleMarker([h.lat, h.lng], {
+    radius: 9, weight: 2, color: '#14161a', fillColor: houseColor(h), fillOpacity: 1,
+  }).addTo(DOORKNOCK_MAP);
+  marker.on('click', (e) => {
+    L.DomEvent.stopPropagation(e);
+    openHouseModal(h.id);
+  });
+}
+
+function houseFormHTML(h) {
+  h = h || { status: 'answered', jobSecured: 'undetermined', notes: '' };
+  return `
+    <div class="dtl-field"><label>Status</label>
+      <select id="f-house-status">
+        <option value="answered" ${h.status === 'answered' ? 'selected' : ''}>Answered</option>
+        <option value="no_answer" ${h.status === 'no_answer' ? 'selected' : ''}>No Answer</option>
+        <option value="no_soliciting" ${h.status === 'no_soliciting' ? 'selected' : ''}>No Soliciting</option>
+      </select>
+    </div>
+    <div class="dtl-field" id="f-house-jobsecured-wrap" style="${h.status === 'answered' ? '' : 'display:none;'}">
+      <label>Job Secured?</label>
+      <select id="f-house-jobsecured">
+        <option value="yes" ${h.jobSecured === 'yes' ? 'selected' : ''}>Yes</option>
+        <option value="no" ${h.jobSecured === 'no' ? 'selected' : ''}>No</option>
+        <option value="undetermined" ${(!h.jobSecured || h.jobSecured === 'undetermined') ? 'selected' : ''}>Undetermined</option>
+      </select>
+    </div>
+    <div class="dtl-field"><label>What happened?</label><textarea id="f-house-notes" placeholder="Notes on the conversation, follow-up needed...">${escapeHTML(h.notes || '')}</textarea></div>
+  `;
+}
+
+function openHouseModal(houseId, presetLatLng) {
+  const existing = houseId ? DATA.houses.find(x => x.id === houseId) : null;
+  openModal({
+    title: existing ? 'Edit House' : 'Log House',
+    subtitle: existing && existing.createdAt ? fmtDate(existing.createdAt.slice(0, 10)) : 'New pin',
+    icon: ICONS.doorknock,
+    variant: 'doorknock',
+    bodyHTML: houseFormHTML(existing),
+    footHTML: `
+      ${existing ? `<button class="dtl-btn dtl-btn-danger" id="dtl-del-house">${ICONS.trash} Delete</button>` : ''}
+      <div style="flex:1"></div>
+      <button class="dtl-btn dtl-btn-ghost" id="dtl-cancel">Cancel</button>
+      <button class="dtl-btn dtl-btn-primary" id="dtl-save-house">${existing ? 'Save Changes' : 'Log House'}</button>`,
+    onMount: () => {
+      const statusSel = document.getElementById('f-house-status');
+      const jobWrap = document.getElementById('f-house-jobsecured-wrap');
+      const syncJob = () => { jobWrap.style.display = statusSel.value === 'answered' ? 'block' : 'none'; };
+      statusSel.addEventListener('change', syncJob); syncJob();
+      document.getElementById('dtl-cancel').onclick = closeModal;
+      if (existing) document.getElementById('dtl-del-house').onclick = async () => {
+        DATA.houses = DATA.houses.filter(x => x.id !== existing.id);
+        await persist('houses'); closeModal(); toast('House removed', undoDelete('houses', existing)); renderAll();
+      };
+      document.getElementById('dtl-save-house').onclick = async () => {
+        const status = statusSel.value;
+        const obj = {
+          id: existing ? existing.id : uid(),
+          lat: existing ? existing.lat : presetLatLng.lat,
+          lng: existing ? existing.lng : presetLatLng.lng,
+          status,
+          jobSecured: status === 'answered' ? document.getElementById('f-house-jobsecured').value : 'undetermined',
+          notes: document.getElementById('f-house-notes').value.trim(),
+          createdAt: existing ? existing.createdAt : new Date().toISOString(),
+        };
+        if (existing) { DATA.houses = DATA.houses.map(x => x.id === existing.id ? obj : x); }
+        else { DATA.houses.push(obj); }
+        await persist('houses'); closeModal(); toast(existing ? 'House updated' : 'House logged'); renderAll();
+      };
+    },
+  });
+}
+
 /* ============================ ROUTER / RENDER ============================ */
 function renderAll() {
   renderNav();
@@ -2245,8 +2436,10 @@ function renderAll() {
   else if (VIEW === 'buylist') html = renderBuyList();
   else if (VIEW === 'calltext') html = renderCallText();
   else if (VIEW === 'reports') html = renderReports();
+  else if (VIEW === 'doorknock') html = renderDoorKnock();
   viewRoot.innerHTML = html;
   wireViewEvents();
+  if (VIEW === 'doorknock') initDoorKnockMap();
 }
 
 function wireViewEvents() {
@@ -2451,7 +2644,7 @@ async function handleAuthSubmit() {
 async function handleLogout() {
   try { await supabase.auth.signOut(); } catch (e) {}
   CURRENT_USER = null;
-  DATA = { clients: [], inventory: [], events: [], guides: [], pricing: [], invoices: [], buylist: [], followups: [] };
+  DATA = { clients: [], inventory: [], events: [], guides: [], pricing: [], invoices: [], buylist: [], followups: [], houses: [] };
   showAuthGate();
 }
 async function startApp() {
@@ -2481,7 +2674,7 @@ async function importBackupFile(file) {
     const text = await file.text();
     const parsed = JSON.parse(text);
     const incoming = parsed.data || parsed; // allow raw DATA object too
-    const keys = ['clients', 'inventory', 'events', 'guides', 'pricing', 'invoices', 'buylist', 'followups'];
+    const keys = ['clients', 'inventory', 'events', 'guides', 'pricing', 'invoices', 'buylist', 'followups', 'houses'];
     let restored = 0;
     for (const key of keys) {
       if (Array.isArray(incoming[key])) { DATA[key] = incoming[key]; await persist(key); restored++; }
